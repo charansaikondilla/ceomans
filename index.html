@@ -1,0 +1,1363 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fryyday Production Spec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<meta name="description" content="Fryyday v2.0 — production PRD and engineering specification. React Native + AWS. Prototype.">
+
+<style>
+/* ══════════════════════════════════════════════════════════════
+   STRIKING LIGHTNING — the product's own design system.
+   Committed single-theme: this document is an instrument panel.
+   Every colour is painted explicitly so it holds on any host ground.
+   ══════════════════════════════════════════════════════════════ */
+:root{
+  --ground:#000000;
+  --surface:#0A0A0B;
+  --surface-2:#121214;
+  --neon:#EAFF00;
+  --ink:#E3E2E7;
+  --ink-dim:#C7C9AB;
+  --outline:#919378;
+  --rule:rgba(145,147,120,.22);
+  --rule-soft:rgba(145,147,120,.12);
+  --glass:linear-gradient(135deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+  --glass-edge:rgba(234,255,0,.15);
+  --ok:#00C853;
+  --bad:#FF1744;
+  --warn:#FFAB00;
+  --info:#3DDCFF;
+
+  --sans:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+
+  --measure:69ch;
+  --rail:250px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* atmospheric glow — two radial washes behind everything */
+.void{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.void i{position:absolute;display:block;border-radius:50%;filter:blur(120px);opacity:.06}
+.void i:nth-child(1){width:min(60vw,720px);aspect-ratio:1;background:var(--neon);top:-16vh;right:-12vw}
+.void i:nth-child(2){width:min(48vw,560px);aspect-ratio:1;background:var(--info);bottom:-20vh;left:-14vw;opacity:.045}
+
+a{color:var(--neon);text-decoration:none;border-bottom:1px solid rgba(234,255,0,.3)}
+a:hover{border-bottom-color:var(--neon)}
+:focus-visible{outline:2px solid var(--neon);outline-offset:3px;border-radius:2px}
+
+/* ── shell ─────────────────────────────────────────────────── */
+.shell{position:relative;z-index:1;display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:0;max-width:1400px;margin:0 auto}
+
+/* ── rail ──────────────────────────────────────────────────── */
+.rail{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:34px 22px 40px 28px;border-right:1px solid var(--rule-soft)}
+.rail-mark{font-family:var(--sans);font-weight:800;font-style:italic;font-size:19px;letter-spacing:-.4px;color:var(--neon);line-height:1;margin:0 0 4px}
+.rail-sub{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--outline);margin:0 0 26px}
+.rail nav{display:flex;flex-direction:column;gap:1px}
+.rail nav a{display:grid;grid-template-columns:22px 1fr;gap:9px;align-items:baseline;padding:5px 8px;border:0;border-radius:4px;color:var(--ink-dim);font-size:13.5px;line-height:1.35;transition:background .18s,color .18s}
+.rail nav a span{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--outline);font-variant-numeric:tabular-nums}
+.rail nav a:hover{background:rgba(234,255,0,.06);color:var(--ink)}
+.rail nav a:hover span{color:var(--neon)}
+
+/* ── column ────────────────────────────────────────────────── */
+.col{padding:0 clamp(20px,4vw,64px) 140px;min-width:0}
+.wrap{max-width:var(--measure)}
+.wide{max-width:min(100%,920px)}
+
+/* ── masthead ──────────────────────────────────────────────── */
+.mast{padding:76px 0 44px;border-bottom:1px solid var(--rule)}
+.proto{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--warn);border:1px solid rgba(255,171,0,.42);background:rgba(255,171,0,.07);padding:5px 11px;border-radius:999px;margin-bottom:26px}
+.proto::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--warn);box-shadow:0 0 8px var(--warn)}
+h1.title{font-size:clamp(46px,8.4vw,84px);font-weight:800;font-style:italic;letter-spacing:-.038em;line-height:.9;margin:0;color:var(--neon);text-wrap:balance}
+.title-sub{font-size:clamp(19px,2.4vw,26px);font-weight:600;letter-spacing:-.02em;line-height:1.24;margin:18px 0 0;color:var(--ink);max-width:22ch;text-wrap:balance}
+.deck{margin:22px 0 0;font-size:17px;color:var(--ink-dim);max-width:60ch}
+
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:0;margin:40px 0 0;max-width:min(100%,920px);border-top:1px solid var(--rule-soft)}
+.facts div{padding:15px 18px 15px 0;border-bottom:1px solid var(--rule-soft)}
+.facts dt{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--outline);margin:0 0 5px}
+.facts dd{margin:0;font-size:14.5px;font-weight:600;color:var(--ink);line-height:1.35}
+
+/* ── sections ──────────────────────────────────────────────── */
+section{padding:64px 0 0;scroll-margin-top:20px}
+.sec-head{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:baseline;margin:0 0 8px}
+.sec-num{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--neon);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+h2{font-size:clamp(27px,3.6vw,36px);font-weight:700;letter-spacing:-.026em;line-height:1.1;margin:0;color:var(--ink);text-wrap:balance}
+h3{font-size:19px;font-weight:700;letter-spacing:-.012em;margin:44px 0 12px;color:var(--ink);text-wrap:balance}
+h4{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--outline);margin:32px 0 10px}
+p{margin:0 0 17px}
+strong{color:var(--ink);font-weight:700}
+em{color:var(--ink-dim)}
+
+/* role tags — the structural device: whose call this is */
+.voices{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 0}
+.v{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px 3px 8px;border-left:2px solid;color:var(--ink-dim);background:rgba(255,255,255,.022);border-radius:0 3px 3px 0;white-space:nowrap}
+.v-pm{border-color:var(--neon)}
+.v-ux{border-color:#FF5FD1}
+.v-mob{border-color:var(--info)}
+.v-be{border-color:var(--ok)}
+.v-inf{border-color:#B388FF}
+.v-qa{border-color:var(--warn)}
+
+/* ── prose lists ───────────────────────────────────────────── */
+ul,ol{margin:0 0 17px;padding-left:1.15em}
+li{margin:0 0 8px}
+li::marker{color:var(--outline)}
+
+/* ── tables ────────────────────────────────────────────────── */
+.tw{overflow-x:auto;margin:20px 0 26px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}
+th{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--outline);text-align:left;padding:12px 16px 12px 0;border-bottom:1px solid var(--rule);white-space:nowrap;vertical-align:bottom}
+td{padding:12px 16px 12px 0;border-bottom:1px solid var(--rule-soft);vertical-align:top;color:var(--ink-dim)}
+tr:last-child td{border-bottom:0}
+td:first-child,th:first-child{padding-left:0}
+td strong{color:var(--ink)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;white-space:nowrap}
+.k{font-family:var(--mono);font-size:12px;color:var(--neon);white-space:nowrap;font-weight:500}
+.id{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--neon);white-space:nowrap}
+
+/* ── code ──────────────────────────────────────────────────── */
+code{font-family:var(--mono);font-size:.855em;color:var(--neon);background:rgba(234,255,0,.07);padding:1px 5px;border-radius:3px;word-break:break-word}
+td code,th code,li code{font-size:12px}
+pre{margin:20px 0 26px;padding:20px 22px;background:var(--surface);border:1px solid var(--rule-soft);border-left:2px solid var(--glass-edge);border-radius:0 8px 8px 0;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.68;color:var(--ink-dim)}
+pre code{background:0;padding:0;color:inherit;font-size:inherit}
+pre .c{color:var(--outline);font-style:italic}
+pre .n{color:var(--neon)}
+pre .g{color:var(--ok)}
+
+/* ── the invariants panel — the one bold moment ────────────── */
+.invariants{margin:26px 0 30px;padding:28px 30px;background:var(--glass);border:1px solid var(--glass-edge);border-radius:16px;box-shadow:0 0 44px rgba(234,255,0,.055),inset 0 1px 0 rgba(255,255,255,.03)}
+.invariants h4{margin-top:0;color:var(--neon)}
+.inv{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-top:1px solid var(--rule-soft)}
+.inv:first-of-type{border-top:0;padding-top:4px}
+.inv b{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--neon);line-height:1.25;font-variant-numeric:tabular-nums}
+.inv p{margin:0 0 5px;color:var(--ink);font-size:15px;font-weight:600}
+.inv small{display:block;color:var(--ink-dim);font-size:13.5px;line-height:1.55;font-weight:400}
+.inv small code{font-size:11.5px}
+
+/* ── callouts ──────────────────────────────────────────────── */
+.note{margin:24px 0;padding:18px 22px;border-left:2px solid var(--outline);background:rgba(255,255,255,.018);border-radius:0 6px 6px 0;font-size:15px;color:var(--ink-dim)}
+.note p:last-child{margin-bottom:0}
+.note b.lede{display:block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--outline);margin-bottom:7px}
+.note.hot{border-left-color:var(--warn);background:rgba(255,171,0,.045)}
+.note.hot b.lede{color:var(--warn)}
+.note.cold{border-left-color:var(--info);background:rgba(61,220,255,.04)}
+.note.cold b.lede{color:var(--info)}
+
+/* ── core loop ─────────────────────────────────────────────── */
+.loop{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:24px 0 10px}
+.loop .st{flex:1 1 128px;min-width:128px;padding:13px 14px;background:var(--glass);border:1px solid var(--rule-soft);border-radius:10px}
+.loop .st u{display:block;font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.14em;color:var(--neon);text-decoration:none;margin-bottom:5px;font-variant-numeric:tabular-nums}
+.loop .st span{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.32;display:block}
+.loop .st.key{border-color:var(--glass-edge);box-shadow:0 0 26px rgba(234,255,0,.07)}
+.loop-back{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--outline);margin:0 0 26px;display:flex;align-items:center;gap:9px}
+.loop-back::before{content:"";height:1px;flex:0 0 34px;background:linear-gradient(90deg,var(--neon),transparent)}
+
+/* ── swatches ──────────────────────────────────────────────── */
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(126px,1fr));gap:2px;margin:20px 0 26px}
+.sw div{padding:13px 12px;background:var(--surface);border:1px solid var(--rule-soft)}
+.sw i{display:block;height:34px;border-radius:5px;margin-bottom:10px;border:1px solid rgba(255,255,255,.09)}
+.sw b{display:block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin-bottom:2px}
+.sw span{font-family:var(--mono);font-size:10.5px;color:var(--outline);font-variant-numeric:tabular-nums}
+
+/* ── masonry sketch ────────────────────────────────────────── */
+.masonry{display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,30px);gap:6px;margin:22px 0 26px;max-width:430px}
+.masonry b{display:flex;align-items:flex-end;padding:9px;background:var(--glass);border:1px solid var(--rule-soft);border-radius:8px;font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.12em;color:var(--ink-dim)}
+.masonry b:nth-child(1){grid-column:span 3;grid-row:span 4;border-color:var(--glass-edge);color:var(--neon)}
+.masonry b:nth-child(2){grid-column:span 3;grid-row:span 2}
+.masonry b:nth-child(3){grid-column:span 3;grid-row:span 2}
+.masonry b:nth-child(4){grid-column:span 2;grid-row:span 2}
+.masonry b:nth-child(5){grid-column:span 4;grid-row:span 2}
+
+/* ── CTA state machine ─────────────────────────────────────── */
+.fsm{margin:22px 0 26px;border-top:1px solid var(--rule)}
+.fsm div{display:grid;grid-template-columns:minmax(150px,1fr) auto minmax(160px,1.05fr);gap:14px;align-items:center;padding:11px 0;border-bottom:1px solid var(--rule-soft)}
+.fsm em{font-style:normal;font-size:13.5px;color:var(--ink-dim)}
+.fsm i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--outline)}
+.fsm b{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.06em;padding:6px 11px;border-radius:6px;text-align:center;white-space:nowrap}
+.fsm b.go{background:var(--neon);color:#000;box-shadow:0 0 18px rgba(234,255,0,.26)}
+.fsm b.wait{background:rgba(234,255,0,.1);color:var(--neon);border:1px solid var(--glass-edge)}
+.fsm b.off{background:rgba(255,255,255,.03);color:var(--outline);border:1px solid var(--rule-soft)}
+.fsm b.gone{background:rgba(255,23,68,.08);color:var(--bad);border:1px solid rgba(255,23,68,.25)}
+
+/* ── architecture svg ──────────────────────────────────────── */
+.arch{margin:24px 0 26px;overflow-x:auto}
+.arch svg{display:block;min-width:660px;width:100%;height:auto}
+
+/* ── layers (no-errors) ────────────────────────────────────── */
+.layers{margin:22px 0 26px;counter-reset:L}
+.layers div{display:grid;grid-template-columns:34px 1fr;gap:16px;padding:15px 0;border-top:1px solid var(--rule-soft);counter-increment:L}
+.layers div::before{content:"L" counter(L);font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--neon);padding-top:2px;font-variant-numeric:tabular-nums}
+.layers b{display:block;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.layers span{font-size:14px;color:var(--ink-dim);line-height:1.56}
+
+/* ── checklist ─────────────────────────────────────────────── */
+.dod{margin:20px 0 26px;padding:24px 26px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:12px;list-style:none}
+.dod li{display:grid;grid-template-columns:20px 1fr;gap:11px;margin:0 0 10px;font-size:14px;color:var(--ink-dim)}
+.dod li:last-child{margin-bottom:0}
+.dod li::before{content:"";width:13px;height:13px;margin-top:5px;border:1.5px solid var(--glass-edge);border-radius:3px}
+
+/* ── milestones ────────────────────────────────────────────── */
+.ms{margin:22px 0 26px;border-top:1px solid var(--rule)}
+.ms article{display:grid;grid-template-columns:52px 78px 1fr;gap:18px;padding:16px 0;border-bottom:1px solid var(--rule-soft);align-items:start}
+.ms .m{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--neon);font-variant-numeric:tabular-nums}
+.ms .w{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--outline);padding-top:3px}
+.ms b{display:block;font-size:15.5px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.ms span{display:block;font-size:14px;color:var(--ink-dim);line-height:1.55;margin-bottom:7px}
+.ms .gate{font-family:var(--mono);font-size:11.5px;color:var(--ok);line-height:1.5;display:block}
+.ms .gate::before{content:"EXIT GATE · ";color:var(--outline);letter-spacing:.1em}
+
+/* ── severity chips ────────────────────────────────────────── */
+.sev{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;white-space:nowrap}
+.sev.c{background:rgba(255,23,68,.13);color:var(--bad)}
+.sev.h{background:rgba(255,171,0,.13);color:var(--warn)}
+.sev.m{background:rgba(145,147,120,.14);color:var(--ink-dim)}
+
+/* ── decision cards ────────────────────────────────────────── */
+.dec{display:grid;gap:2px;margin:22px 0 26px}
+.dec article{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:17px 20px;background:var(--surface);border:1px solid var(--rule-soft)}
+.dec .d{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--neon)}
+.dec b{display:block;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:5px}
+.dec span{display:block;font-size:14px;color:var(--ink-dim);line-height:1.55}
+.dec span::before{content:"→ ";color:var(--neon);font-weight:700}
+
+/* ── footer ────────────────────────────────────────────────── */
+footer{margin-top:88px;padding:34px 0 0;border-top:1px solid var(--rule);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--outline);display:flex;flex-wrap:wrap;gap:8px 22px}
+
+/* ── responsive ────────────────────────────────────────────── */
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule);padding:26px 20px 22px}
+  .rail nav{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0}
+  .col{padding-top:0}
+  .mast{padding-top:44px}
+  .fsm div{grid-template-columns:1fr;gap:7px;padding:14px 0}
+  .fsm i{display:none}
+  .ms article{grid-template-columns:44px 1fr;gap:14px}
+  .ms .w{grid-column:2;padding-top:0;margin-bottom:5px}
+  .ms>article>b{grid-column:2}
+  .ms>article>span,.ms>article>.gate{grid-column:2}
+}
+</style>
+
+<div class="void" aria-hidden="true"><i></i><i></i></div>
+
+<div class="shell">
+
+  <aside class="rail">
+    <p class="rail-mark">FRYYDAY</p>
+    <p class="rail-sub">PRD v2.0 · Prototype</p>
+    <nav aria-label="Contents">
+      <a href="#summary"><span>01</span>Executive summary</a>
+      <a href="#product"><span>02</span>The product</a>
+      <a href="#metrics"><span>03</span>Success metrics</a>
+      <a href="#scope"><span>04</span>Scope</a>
+      <a href="#design"><span>05</span>Design system</a>
+      <a href="#screens"><span>06</span>Screens</a>
+      <a href="#mobile"><span>07</span>Mobile architecture</a>
+      <a href="#backend"><span>08</span>Backend</a>
+      <a href="#domain"><span>09</span>Domain logic</a>
+      <a href="#data"><span>10</span>Data model</a>
+      <a href="#noerrors"><span>11</span>No errors</a>
+      <a href="#nfr"><span>12</span>Performance</a>
+      <a href="#aws"><span>13</span>AWS &amp; deploy</a>
+      <a href="#ops"><span>14</span>Observability</a>
+      <a href="#risks"><span>15</span>Risks</a>
+      <a href="#plan"><span>16</span>Delivery plan</a>
+      <a href="#decisions"><span>17</span>Your decisions</a>
+    </nav>
+  </aside>
+
+  <main class="col">
+
+    <!-- ═══ MASTHEAD ═══ -->
+    <header class="mast">
+      <p class="proto">Prototype specification · not yet built</p>
+      <h1 class="title">FRYYDAY</h1>
+      <p class="title-sub">Production PRD &amp; engineering specification</p>
+      <p class="deck">Turning nearby verified people into real in-person plans. This document specifies the complete production rebuild: React&nbsp;Native on both stores, a TypeScript backend on AWS, and safety enforced in code rather than in copy.</p>
+
+      <dl class="facts">
+        <div><dt>Version</dt><dd>2.0 · Active</dd></div>
+        <div><dt>Client</dt><dd>React Native · Expo</dd></div>
+        <div><dt>Backend</dt><dd>NestJS · Fargate</dd></div>
+        <div><dt>Data</dt><dd>Postgres · PostGIS</dd></div>
+        <div><dt>Timeline</dt><dd>14 weeks</dd></div>
+        <div><dt>Launch</dt><dd>Bangalore</dd></div>
+      </dl>
+    </header>
+
+    <!-- ═══ 01 ═══ -->
+    <section id="summary">
+      <div class="sec-head"><span class="sec-num">01</span><h2>Executive summary</h2></div>
+      <div class="voices"><span class="v v-pm">Product</span></div>
+
+      <div class="wrap">
+        <p style="margin-top:22px">Fryyday is a <strong>safety-first, activity-first social app</strong> that solves a specific failure: adults have contacts but no plans. Dating apps optimise for matching. Messaging apps optimise for talking. <strong>Fryyday optimises for actually showing up somewhere.</strong></p>
+        <p>A user opens the app, sees real plans happening near them this week — a 7am walk, coffee at 4, pickleball on Sunday — asks to join one, the host accepts, a chat opens, they meet in a public place, and both confirm it happened. That last confirmation is the only metric that matters.</p>
+
+        <h3>What changes in v2.0</h3>
+        <p>v1 was a <strong>single-device demo</strong>: beautiful, 117 tests green, an installable APK — and fundamentally a simulation. There was no server. The other person was a <code>Timer</code>. Closing the app lost everything. v2.0 makes it real.</p>
+      </div>
+
+      <div class="tw wide">
+        <table>
+          <thead><tr><th>Dimension</th><th>v1 — demo, archived</th><th>v2.0 — this spec</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Client</strong></td><td>Flutter / Dart</td><td><strong>React Native + Expo, TypeScript</strong></td></tr>
+            <tr><td><strong>Other users</strong></td><td>Simulated with timers</td><td><strong>Real people over the network</strong></td></tr>
+            <tr><td><strong>Persistence</strong></td><td>In-memory, lost on close</td><td><strong>Postgres, durable, backed up</strong></td></tr>
+            <tr><td><strong>Auth</strong></td><td>Any 6 digits pass</td><td><strong>Real SMS OTP via Cognito</strong></td></tr>
+            <tr><td><strong>Realtime</strong></td><td>Fake</td><td><strong>Socket.IO, Redis fan-out</strong></td></tr>
+            <tr><td><strong>Location</strong></td><td>Seeded coordinates</td><td><strong>Real GPS, PostGIS radius queries</strong></td></tr>
+            <tr><td><strong>Map</strong></td><td>Stylised pins, no tiles</td><td><strong>react-native-maps, dark-styled</strong></td></tr>
+            <tr><td><strong>Hosting</strong></td><td>None</td><td><strong>AWS Fargate · RDS · S3 · CloudFront</strong></td></tr>
+            <tr><td><strong>Distribution</strong></td><td>Sideloaded APK</td><td><strong>App Store + Google Play via EAS</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wrap">
+        <h3>The honest cost of the stack switch</h3>
+        <p>React Native was directed, so React Native it is — but the price should be visible. <strong>Around 9,000 lines of working Dart</strong> (86 files, 117 passing tests, a full design system, 22 screens, a tested invitation engine) do not port automatically. Roughly <strong>3 of the 14 weeks below is re-implementing UI that already existed.</strong></p>
+      </div>
+
+      <div class="tw wide">
+        <table>
+          <thead><tr><th>Asset</th><th>Fate</th></tr></thead>
+          <tbody>
+            <tr><td>Product design, core loop, safety invariants</td><td><strong style="color:var(--ok)">Kept verbatim</strong> — hard-won, correct</td></tr>
+            <tr><td>"Striking Lightning" design system + tokens</td><td><strong style="color:var(--ok)">Kept</strong>, re-expressed as a TypeScript theme</td></tr>
+            <tr><td>Ranking / trust / credit / gate algorithms</td><td><strong style="color:var(--ok)">Ported Dart → TypeScript</strong>, moved server-side</td></tr>
+            <tr><td>Screen inventory + interaction specs</td><td><strong style="color:var(--ok)">Kept</strong> as the build checklist</td></tr>
+            <tr><td>Flutter widget implementations</td><td><strong style="color:var(--bad)">Rebuilt</strong> in React Native</td></tr>
+            <tr><td>LAN peer-to-peer mesh</td><td><strong style="color:var(--bad)">Deleted.</strong> Existed only to fake multiplayer without a server</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wrap">
+        <div class="note cold">
+          <b class="lede">Why React Native is nonetheless defensible here</b>
+          <p style="margin-bottom:0">One language from the Postgres query to the button label, a shared contracts package that makes client/server type drift <em>impossible</em>, over-the-air updates for instant hotfixes without app-store review, and a far larger hiring pool in India. That shared-types property is the single biggest lever on the <strong>"no errors"</strong> requirement — and Flutter cannot offer it.</p>
+        </div>
+
+        <h3>Three requirements, made concrete</h3>
+      </div>
+
+      <div class="tw wide">
+        <table>
+          <thead><tr><th>Requirement</th><th>How it is delivered</th></tr></thead>
+          <tbody>
+            <tr><td><strong>"No errors"</strong></td><td>A <strong>7-layer error-elimination strategy</strong> (§11): TypeScript strict, one Zod schema per API shape shared by client <em>and</em> server, runtime validation at every boundary, database constraints as the final backstop, blocking CI gates, error boundaries, Sentry on both tiers — plus a Definition of Done no PR merges without.</td></tr>
+            <tr><td><strong>"Deploy on AWS faster"</strong></td><td>The entire cloud is <strong>one <code>cdk deploy</code></strong> (§13). Infrastructure is code, reviewed in PRs, reproducible across three environments. First deploy ≈ 25 minutes; every deploy after ≈ 6 minutes, zero-downtime, automatic rollback on failed health checks.</td></tr>
+            <tr><td><strong>"Designed correctly"</strong></td><td>The design system is <strong>tokens in code</strong>, not a PDF (§5). Every screen has acceptance criteria, every state is specified, and accessibility is a merge gate rather than a cleanup phase.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══ 02 ═══ -->
+    <section id="product">
+      <div class="sec-head"><span class="sec-num">02</span><h2>The product</h2></div>
+      <div class="voices"><span class="v v-pm">Product</span><span class="v v-be">Backend</span></div>
+
+      <div class="wrap">
+        <p style="margin-top:22px"><strong>Problem.</strong> Between 22 and 35 the social defaults break. College ends, people move cities, work goes remote. You still have a contact list — you just have nothing on the calendar. Existing products make this worse: they hand you infinite strangers to talk to and no reason to leave the house, and the moment you try to meet someone the experience feels unsafe or spammy.</p>
+        <p><strong>User.</strong> 22–35, living in Bangalore, new to the city, newly remote, or recently out of college. Disposable time on weekday evenings and weekends. Used to verification friction.</p>
+        <p><strong>Promise.</strong> <em>"Something real to show up to this week, with people you can trust."</em></p>
+
+        <h3>The core loop</h3>
+        <p>Everything in the app exists to move a user one step further around this loop. <strong>A feature that does not serve the loop does not ship.</strong></p>
+      </div>
+
+      <div class="loop wide">
+        <div class="st"><u>01</u><span>Create a plan</span></div>
+        <div class="st"><u>02</u><span>Nearby people discover it</span></div>
+        <div class="st"><u>03</u><span>Request to join</span></div>
+        <div class="st key"><u>04</u><span>Host decides</span></div>
+        <div class="st key"><u>05</u><span>Chat unlocks</span></div>
+        <div class="st"><u>06</u><span>Meet at a public venue</span></div>
+        <div class="st"><u>07</u><span>Both confirm + rate</span></div>
+        <div class="st"><u>08</u><span>Trust score rises</span></div>
+      </div>
+      <p class="loop-back">Step 08 feeds back into step 02 — trust compounds discovery</p>
+
+      <div class="wrap">
+        <h3>The five safety invariants</h3>
+        <p>These <em>are</em> the product. In v1, three of four were enforced only on the client, which made them decorative — a patched client could bypass every one. <strong>In v2.0 all five are enforced server-side, and each has a named test that fails the build if broken.</strong></p>
+      </div>
+
+      <div class="invariants wide">
+        <h4>Enforced in code · not in copy</h4>
+
+        <div class="inv"><b>I1</b><div>
+          <p>Accept-before-chat</p>
+          <small>Nobody can message you until <em>you</em> accepted them. Requesting is never enough. A <code>ChatGuard</code> verifies an accepted row in <code>plan_members</code> before any send is accepted on the socket <strong>or</strong> REST. → <code>i1-accept-before-chat.e2e.ts</code></small>
+        </div></div>
+
+        <div class="inv"><b>I2</b><div>
+          <p>Verified-first</p>
+          <small>Identity verification gates hosting and 1:1 Find; trust is visible on every profile. A <code>@RequiresVerification()</code> guard sits on <code>POST /plans</code> and <code>POST /finds</code>. → <code>i2-verification-gate.e2e.ts</code></small>
+        </div></div>
+
+        <div class="inv"><b>I3</b><div>
+          <p>Public venues by default</p>
+          <small><code>venue_public</code> defaults true; private venues require an explicit confirm and are excluded from Discover. → <code>i3-public-venue.e2e.ts</code></small>
+        </div></div>
+
+        <div class="inv"><b>I4</b><div>
+          <p>Consent is revocable and cheap</p>
+          <small>Block, report, quiet hours and women-only plans are one tap and always reachable. Blocks are bidirectional and filtered in the <strong>SQL layer</strong> of every listing query, not in the app. → <code>i4-block-is-bidirectional.e2e.ts</code></small>
+        </div></div>
+
+        <div class="inv"><b>I5</b><div>
+          <p>No silent location leakage <span style="color:var(--warn);font-family:var(--mono);font-size:10px;letter-spacing:.1em">NEW</span></p>
+          <small>Exact coordinates never leave the server for another user. The API returns a jittered, bucketed <strong>distance band</strong> — <code>"1–2 km"</code> — never another person's raw lat/lng. Enforced by a serialiser that has no field for it. → <code>i5-no-raw-coords.e2e.ts</code></small>
+        </div></div>
+      </div>
+
+      <div class="wrap">
+        <div class="note hot">
+          <b class="lede">Why I5 is new and non-negotiable</b>
+          <p style="margin-bottom:0">The moment there is a real network, "show me who is nearby" becomes "let me triangulate where she lives". A response object that <em>cannot represent</em> another user's exact position is the only defence that survives a hostile client.</p>
+        </div>
+
+        <h3>The two connection paths</h3>
+        <p>There are exactly two ways two people end up together, and they must never be conflated.</p>
+        <p><strong>Path A — the Plan path</strong> <em>(scheduled · group · public).</em> Someone hosts an activity at a time and place; others ask to join. Create&nbsp;→ Feed/Map&nbsp;→ Detail&nbsp;→ Request&nbsp;→ Accept&nbsp;→ Chat&nbsp;→ Meet&nbsp;→ Confirm&nbsp;+&nbsp;rate.</p>
+        <p><strong>Path B — the Find path</strong> <em>(spontaneous · 1:1 · expires in 24h).</em> You are out right now; so is someone nearby. Discover&nbsp;→ Find&nbsp;→ they accept&nbsp;→ a <strong>24-hour group</strong> forms with a live countdown&nbsp;→ it expires and disappears.</p>
+        <p>The Find path exists because the Plan path is too slow for <em>"I'm free now"</em>. The 24-hour expiry is the safety mechanism, not a limitation: a spontaneous connection must not silently become a permanent channel. <strong>Expiry runs as a server-side job, never on the client</strong> — an expiry a user can dodge by changing their phone clock is not a safety mechanism.</p>
+
+        <h3>Explicit non-goals</h3>
+        <p>These are not "later" — they are refusals, and every one protects the loop.</p>
+      </div>
+
+      <div class="tw wide">
+        <table>
+          <thead><tr><th>Non-goal</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Dating / romance framing</strong></td><td>Changes user intent, safety profile, and who joins. Fryyday is activity-first and group-capable</td></tr>
+            <tr><td><strong>Infinite feed + DMs with strangers</strong></td><td>This is the thing we are the alternative to</td></tr>
+            <tr><td><strong>Multi-city launch</strong></td><td>Liquidity is local. A thin map in 12 cities is worse than a dense one in 1</td></tr>
+            <tr><td><strong>Paid subscriptions</strong></td><td>Credits are an anti-spam budget, <em>not</em> a paywall. Monetising reach corrupts the safety mechanic</td></tr>
+            <tr><td><strong>Sophisticated ML ranking</strong></td><td>You cannot fit a model on data you do not have</td></tr>
+            <tr><td><strong>Web app</strong></td><td>Mobile-only. The product is "leave the house"</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══ 03 ═══ -->
+    <section id="metrics">
+      <div class="sec-head"><span class="sec-num">03</span><h2>Success metrics</h2></div>
+      <div class="voices"><span class="v v-pm">Product</span></div>
+      <div class="wrap">
+        <p style="margin-top:22px"><strong>The one number that matters: confirmed meetups per active user per month.</strong> Everything else is a proxy, and the safety invariants outrank all of them.</p>
+      </div>
+
+      <div class="tw wide">
+        <table>
+          <thead><tr><th>Metric</th><th>Target</th><th>Lever</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Invite → join conversion</strong> <em>(North Star)</em></td><td class="num">≥ 20%</td><td>Deterministic sort now; learned ranking only at T3</td></tr>
+            <tr><td><strong>Weekly confirmed meetups</strong></td><td class="num">grow WoW</td><td><strong>Liquidity</strong>, not the algorithm</td></tr>
+            <tr><td>Plan fill rate</td><td class="num">≥ 60%</td><td>Discovery quality + reminders</td></tr>
+            <tr><td>Time to first joinable plan</td><td class="num">&lt; 60 s</td><td>Onboarding + seeded hosts</td></tr>
+            <tr><td>Female participation</td><td class="num">≥ 35%</td><td>Women-only join rule + real verification</td></tr>
+            <tr><td><strong>Safety incident rate</strong></td><td class="num" style="color:var(--ok)">→ 0</td><td>I1–I5, verification, moderation queue</td></tr>
+            <tr><td>Invite fatigue (decline + mute)</td><td class="num">&lt; 15%</td><td>Caps, cooldowns, quiet hours</td></tr>
+            <tr><td>D7 / D30 retention</td><td class="num">≥ 25% / ≥ 12%</td><td>"Always something to join"</td></tr>
+            <tr><td>Crash-free sessions</td><td class="num">≥ 99.5%</td><td>§11</td></tr>
+            <tr><td>API p99 latency</td><td class="num">&lt; 400 ms</td><td>§12</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══ 04 ═══ -->
+    <section id="scope">
+      <div class="sec-head"><span class="sec-num">04</span><h2>Scope — v1.0 release</h2></div>
+      <div class="voices"><span class="v v-pm">Product</span></div>
+      <div class="wrap"><h4 style="margin-top:26px">P0 — must ship, not negotiable</h4></div>
+
+      <div class="tw wide">
+        <table>
+          <thead><tr><th>#</th><th>Capability</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td class="id">P0-1</td><td>Real phone auth (SMS OTP) + session management</td><td>Cognito + MSG91</td></tr>
+            <tr><td class="id">P0-2</td><td>Profile: photo, name, age, bio, interests, gender</td><td>S3 presigned upload</td></tr>
+            <tr><td class="id">P0-3</td><td><strong>Real identity verification</strong></td><td>Selfie liveness. Gates hosting (I2)</td></tr>
+            <tr><td class="id">P0-4</td><td>Create / edit / cancel a plan</td><td>Activity, venue, time, size, join rule</td></tr>
+            <tr><td class="id">P0-5</td><td>Discovery: Feed (soonest / nearest) + Map + filters</td><td>PostGIS <code>ST_DWithin</code></td></tr>
+            <tr><td class="id">P0-6</td><td>Request → host accept/decline → membership</td><td>The loop</td></tr>
+            <tr><td class="id">P0-7</td><td><strong>Realtime group chat</strong>, gated by I1</td><td>Socket.IO</td></tr>
+            <tr><td class="id">P0-8</td><td>Attendance confirmation + mutual rating</td><td>Closes the loop</td></tr>
+            <tr><td class="id">P0-9</td><td>Trust score on every profile</td><td>§9</td></tr>
+            <tr><td class="id">P0-10</td><td>Safety: block, report, quiet hours, women-only, SOS</td><td>I4</td></tr>
+            <tr><td class="id">P0-11</td><td>Invite credits + ledger + daily grant</td><td>Server-authoritative</td></tr>
+            <tr><td class="id">P0-12</td><td>Push notifications, throttled + quiet-hours aware</td><td>Max 5/user/day</td></tr>
+            <tr><td class="id">P0-13</td><td>Find path: Discover → Find → 24h group → auto-expiry</td><td>Path B</td></tr>
+            <tr><td class="id">P0-14</td><td><strong>Account deletion + data export</strong></td><td>Legal — India DPDP Act</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wrap">
+        <h4>P1 — fast-follow, weeks 2–6 post-launch</h4>
+        <p>Waitlist for full plans · recurring plans · plan templates · in-app moderation console · referral invites · read receipts and typing indicators · photo carousel · calendar export · Hindi localisation.</p>
+        <h4>P2 — later, on evidence only</h4>
+        <p>Learned ranking · venue and business accounts · paid credit packs · multi-city · events ticketing · web companion · groups that persist past 24 hours.</p>
+        <h4>Out of scope entirely for v1.0</h4>
+        <p>Video calling · in-app payments · stories and feed posts · public profiles and SEO · friend-graph import · Apple/Google social login <em>(phone is the identity; a second identity path weakens I2)</em>.</p>
+      </div>
+    </section>
+
+    <!-- ═══ 05 ═══ -->
+    <section id="design">
+      <div class="sec-head"><span class="sec-num">05</span><h2>Design system — Striking Lightning</h2></div>
+      <div class="voices"><span class="v v-ux">UI/UX</span><span class="v v-mob">React Native</span></div>
+
+      <div class="wrap">
+        <p style="margin-top:22px">The aesthetic survives the stack change unchanged: <strong>dark glassmorphism × high-contrast cyberpunk</strong>. A total-black canvas, one electric neon accent used with discipline, frosted glass surfaces, and <strong>glow instead of drop shadows</strong>. <em>This page is rendered in it.</em></p>
+        <div class="note">
+          <b class="lede">The single rule that keeps it beautiful</b>
+          <p style="margin-bottom:0">Neon <code>#EAFF00</code> is a <strong>scarce resource</strong>. It marks the one thing on screen you should touch next. <strong>Two neon CTAs on one screen is a bug.</strong></p>
+        </div>
+      </div>
+
+      <div class="sw wide">
+        <div><i style="background:#000"></i><b>ground</b><span>#000000</span></div>
+        <div><i style="background:#0A0A0B"></i><b>surface</b><span>#0A0A0B</span></div>
+        <div><i style="background:#121214"></i><b>raised</b><span>#121214</span></div>
+        <div><i style="background:#EAFF00"></i><b>neon</b><span>#EAFF00</span></div>
+        <div><i style="background:#E3E2E7"></i><b>ink</b><span>#E3E2E7</span></div>
+        <div><i style="background:#C7C9AB"></i><b>ink dim</b><span>#C7C9AB</span></div>
+        <div><i style="background:#919378"></i><b>outline</b><span>#919378</span></div>
+        <div><i style="background:#00C853"></i><b>success</b><span>#00C853</span></div>
+        <div><i style="background:#FF1744"></i><b>error</b><span>#FF1744</span></div>
+        <div><i style="background:#FFAB00"></i><b>warning</b><span>#FFAB00</span></div>
+      </div>
+
+      <div class="wrap">
+        <h3>Tokens are the only source of truth</h3>
+        <p>No component may declare a raw hex value — an ESLint rule blocks it at review time. Type: <strong>Hanken Grotesk</strong> for display and body, <strong>JetBrains Mono</strong> for labels and data. <strong>Fonts are bundled, not fetched</strong> — a social app that shows a system-font flash on cold start looks broken.</p>
+      </div>
+
+<pre class="wide"><code><span class="c">// packages/ui/theme.ts — the single source of truth</span>
+export const colors = {
+  background:       <span class="n">'#000000'</span>,  <span class="c">// true black, not near-black</span>
+  surface:          <span class="n">'#0A0A0B'</span>,
+  primary:          <span class="n">'#EAFF00'</span>,  <span class="c">// NEON — use sparingly</span>
+  onSurface:        <span class="n">'#E3E2E7'</span>,
+  onSurfaceVariant: <span class="n">'#C7C9AB'</span>,
+  outline:          <span class="n">'#919378'</span>,
+  glassBorder:      <span class="n">'rgba(234,255,0,0.15)'</span>,  <span class="c">// → 0.60 when active</span>
+} as const;
+
+export const space  = { xs: 4, sm: 12, md: 24, lg: 48, xl: 80 } as const;
+export const radius = { tag: 4, button: 8, card: 16, pill: 999 } as const;</code></pre>
+
+      <div class="wrap">
+        <h3>Elevation — glow, never drop shadow</h3>
+      </div>
+      <div class="tw wide">
+        <table>
+          <thead><tr><th>Level</th><th>Treatment</th></tr></thead>
+          <tbody>
+            <tr><td class="k">L0</td><td>Solid <code>#000</code> — the canvas</td></tr>
+            <tr><td class="k">L1</td><td>Glass: 135° gradient + <code>blur(20)</code> + 1px neon-15% border</td></tr>
+            <tr><td class="k">L2 active</td><td>Border → neon-60% + outer glow <code>0 0 30px</code> + <code>translateY(-2px)</code></td></tr>
+            <tr><td class="k">L3 primary</td><td>Solid neon, black content, glow <code>0 0 20px</code>, shimmer sweep every 6s</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wrap">
+        <div class="note cold">
+          <b class="lede">Why this is now cheap in React Native</b>
+          <p>RN 0.76+ supports <code>boxShadow</code> and <code>filter: blur()</code> on <strong>both iOS and Android</strong>. Before that, this design system needed per-platform hacks and nine-patch images on Android. Glass uses <code>expo-blur</code>'s native <code>BlurView</code>.</p>
+          <p style="margin-bottom:0"><strong>Budget: max 3 concurrent <code>BlurView</code>s per screen.</strong> Blur is GPU-expensive on mid-range Android — this is the number-one jank risk in the app.</p>
+        </div>
+
+        <h3>The signature screen — Home / "Launch Pad"</h3>
+        <p>A 6×6 activity masonry over the atmospheric void, plus the command bar. This is the app's identity. Tapping a tile opens Create Plan pre-filled with that activity.</p>
+      </div>
+
+      <div class="masonry" aria-label="Launch Pad masonry layout: Walk, Coffee, Pickleball, Movie, Travel">
+        <b>WALK</b><b>COFFEE</b><b>PICKLEBALL</b><b>MOVIE</b><b>TRAVEL</b>
+      </div>
+
+      <div class="wrap">
+        <p>The command bar — <code>Friends ▾ · + · "INVITE NOW / ASK ANYTHING" · ➤</code> — is the "create a plan in under 60 seconds" promise, and the most important control in the product.</p>
+
+        <h3>Accessibility is a merge gate, not a phase</h3>
+        <p>Neon-on-black is beautiful and <strong>accessibility-hostile if done carelessly</strong>.</p>
+        <ul>
+          <li><strong>Contrast.</strong> Body <code>#E3E2E7</code> on black = <strong>15.9:1</strong>. Secondary <code>#C7C9AB</code> = <strong>11.6:1</strong>. Neon on black = <strong>18.9:1</strong>. But <code>#919378</code> = <strong>6.4:1</strong> — permitted for ≥14px only, <em>never</em> body text.</li>
+          <li><strong>Never colour alone.</strong> Status is colour + icon + mono label (<code>● VERIFIED</code>, <code>✕ DECLINED</code>). Roughly 8% of men have colour-vision deficiency and our accept/decline pair is green/red.</li>
+          <li><strong>Touch targets ≥ 44×44 pt</strong>, verified by a test that walks the render tree.</li>
+          <li>Every interactive element carries <code>accessibilityLabel</code>, <code>accessibilityRole</code>, <code>accessibilityState</code>. VoiceOver and TalkBack are tested on the core loop each release.</li>
+          <li><strong>Respect reduced motion.</strong> The sonar sweep, shimmer and staggered reveals become instant state changes.</li>
+          <li><strong>Dynamic Type to 200%.</strong> No fixed-height text containers — the number-one source of clipped text.</li>
+        </ul>
+
+        <h3>Motion</h3>
+        <p>Two to three meaningful animations per key screen, never more. Everything runs on the <strong>UI thread</strong> via Reanimated worklets — a dropped frame on the neon shimmer makes the whole app feel cheap.</p>
+      </div>
+
+      <div class="tw wide">
+        <table>
+          <thead><tr><th>Moment</th><th>Motion</th></tr></thead>
+          <tbody>
+            <tr><td>App open</td><td>Wordmark lightning flicker → staggered tile reveal, 60ms apart</td></tr>
+            <tr><td>Send CTA</td><td>Shimmer every 6s; press = scale 0.97 + glow bloom + <code>impactMedium</code> haptic</td></tr>
+            <tr><td>OTP verified</td><td>"Power-up" flicker, success green pulse</td></tr>
+            <tr><td>Request sent</td><td>Push to the Signal Lock Scanner — sonar sweep, reticle breathing</td></tr>
+            <tr><td><strong>Host accepts</strong></td><td>Reticle <strong>snaps inward</strong>, burst ring, success haptic, <code>LINK ESTABLISHED</code></td></tr>
+            <tr><td>Countdown &lt; 1h</td><td>Neon pulse on the timer</td></tr>
+            <tr><td>Pull to refresh</td><td>A neon arc traces — never a stock spinner</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══ 06 ═══ -->
+    <section id="screens">
+      <div class="sec-head"><span class="sec-num">06</span><h2>Screens</h2></div>
+      <div class="voices"><span class="v v-ux">UI/UX</span><span class="v v-mob">React Native</span></div>
+
+      <div class="wrap">
+        <p style="margin-top:22px">24 screens. <strong>Every one implements all five states</strong> — loading (skeleton, never a bare spinner), empty (illustrated, with a CTA that fixes it), error (what happened + retry), offline (cached data + banner), success. <strong>A screen missing a state is not done.</strong></p>
+      </div>
+
+      <div class="tw wide">
+        <table>
+          <thead><tr><th>#</th><th>Screen</th><th>Acceptance criteria</th></tr></thead>
+          <tbody>
+            <tr><td class="id">S1</td><td><strong>Splash</strong></td><td>Renders &lt;400ms after JS load; no font flash; skips itself if a valid session exists</td></tr>
+            <tr><td class="id">S2</td><td><strong>Phone entry</strong></td><td>Rejects &lt;10 digits; provider errors shown verbatim; rate-limit message is human</td></tr>
+            <tr><td class="id">S3</td><td><strong>OTP</strong></td><td><strong>iOS SMS autofill + Android SMS Retriever both work</strong>; wrong code shakes and clears; 5 failures → 15-min lockout</td></tr>
+            <tr><td class="id">S4</td><td><strong>Profile setup</strong></td><td>Photo compressed client-side to ≤1MB before upload; Continue disabled until name + age + ≥1 interest</td></tr>
+            <tr><td class="id">S5</td><td><strong>Verification</strong></td><td>Real liveness provider; the pending state is a first-class screen, not a spinner</td></tr>
+            <tr><td class="id">S6</td><td><strong>Launch Pad</strong> ⭐</td><td>60fps scroll on a Pixel 6a; tile tap pre-fills Create Plan</td></tr>
+            <tr><td class="id">S7</td><td><strong>Feed</strong></td><td>Past plans <strong>never</strong> appear; sort is server-side; infinite scroll paginates by cursor</td></tr>
+            <tr><td class="id">S8</td><td><strong>Map</strong></td><td>200 pins without jank via clustering; the no-GPS state has a real CTA</td></tr>
+            <tr><td class="id">S9</td><td><strong>Plan detail</strong></td><td>The CTA is derived <strong>purely from server state</strong> — never optimistic about membership</td></tr>
+            <tr><td class="id">S10</td><td><strong>Request scanner</strong></td><td>Driven by a <strong>real socket event</strong>, not a timer. Handles accepted, declined, backgrounded, connection-lost</td></tr>
+            <tr><td class="id">S11</td><td><strong>Create plan</strong></td><td>Cannot publish in the past; venue must resolve to coordinates; women-only requires the host be a woman</td></tr>
+            <tr><td class="id">S12</td><td><strong>Requests inbox</strong></td><td>Accepting updates the member count <strong>everywhere</strong> in one frame; optimistic with rollback</td></tr>
+            <tr><td class="id">S13</td><td><strong>Plan chat</strong></td><td><strong>Opens only past I1</strong>; messages survive kill+reopen; offline messages queue and send on reconnect</td></tr>
+            <tr><td class="id">S14</td><td><strong>My plans</strong></td><td>Rating once per (plan, person), enforced server-side</td></tr>
+            <tr><td class="id">S15</td><td><strong>Profile — self</strong></td><td>Trust score explained in one tap</td></tr>
+            <tr><td class="id">S16</td><td><strong>Profile — other</strong></td><td><strong>Shows no exact location, ever (I5)</strong> — only a distance band</td></tr>
+            <tr><td class="id">S17</td><td><strong>Edit profile</strong></td><td>Dirty-state guard on back</td></tr>
+            <tr><td class="id">S18</td><td><strong>Discover</strong></td><td>Distances are <strong>server-computed bands</strong>; excludes blocked and already-grouped</td></tr>
+            <tr><td class="id">S19</td><td><strong>Groups</strong></td><td>Countdown is server-time driven, immune to the device clock</td></tr>
+            <tr><td class="id">S20</td><td><strong>Group chat</strong></td><td>Read-only + banner at expiry; never silently deleted mid-sentence</td></tr>
+            <tr><td class="id">S21</td><td><strong>Invitations</strong></td><td>Expired invites refund the credit if unseen</td></tr>
+            <tr><td class="id">S22</td><td><strong>Send invite</strong></td><td>Balance checked <strong>server-side</strong>; insufficient credits is a real state</td></tr>
+            <tr><td class="id">S23</td><td><strong>Wallet</strong></td><td>Ledger paginates; the balance always equals the ledger sum</td></tr>
+            <tr><td class="id">S24</td><td><strong>Settings + Safety</strong></td><td>Destructive actions confirm; <strong>deletion is irreversible and says so</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wrap">
+        <h3>The Plan Detail CTA — the clearest expression of I1</h3>
+        <p>The button is a pure function of server state. There is <strong>no local <code>isRequested</code> boolean anywhere.</strong></p>
+      </div>
+
+      <div class="fsm wide">
+        <div><em>You are the host</em><i>──▶</i><b class="go">Open host chat</b></div>
+        <div><em>Accepted member</em><i>──▶</i><b class="go">You're in · open chat</b></div>
+        <div><em>Request pending</em><i>──▶</i><b class="wait">Connecting · live status</b></div>
+        <div><em>Request declined</em><i>──▶</i><b class="off">Host declined this time</b></div>
+        <div><em>Plan full, not a member</em><i>──▶</i><b class="off">Plan is full</b></div>
+        <div><em>Blocked, either direction</em><i>──▶</i><b class="gone">Plan is not visible</b></div>
+        <div><em>None of the above</em><i>──▶</i><b class="go">Request to join</b></div>
+      </div>
+
+      <div class="wrap">
+        <div class="note hot">
+          <b class="lede">A bug we are not repeating</b>
+          <p style="margin-bottom:0">v1 shipped a local <code>isRequested</code> flag that offered chat immediately after requesting — <strong>breaking I1 outright</strong>. Deriving the CTA from server state is the fix, and <code>i1-accept-before-chat.e2e.ts</code> asserts it on every build.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 07 ═══ -->
+    <section id="mobile">
+      <div class="sec-head"><span class="sec-num">07</span><h2>Mobile architecture</h2></div>
+      <div class="voices"><span class="v v-mob">React Native</span></div>
+
+      <div class="tw wide" style="margin-top:26px">
+        <table>
+          <thead><tr><th>Layer</th><th>Choice</th><th>Why this, not the alternative</th></tr></thead>
+          <tbody>
+            <tr><td>Runtime</td><td class="k">Expo SDK 54</td><td>EAS Build means <strong>you never need a Mac to build iOS</strong>. Config plugins give native access without ejecting</td></tr>
+            <tr><td>Language</td><td class="k">TypeScript strict</td><td><code>noUncheckedIndexedAccess</code> + <code>exactOptionalPropertyTypes</code> on. Error-elimination layer 1</td></tr>
+            <tr><td>Navigation</td><td class="k">expo-router v6</td><td>Typed links mean no broken navigation. Deep and universal links come free — needed for invite sharing</td></tr>
+            <tr><td>Server state</td><td class="k">TanStack Query v5</td><td>Caching, retries, background refetch, optimistic updates with rollback, offline persistence. Do <strong>not</strong> hand-roll this</td></tr>
+            <tr><td>Client state</td><td class="k">Zustand</td><td>Session and UI only. Redux Toolkit is 3× the boilerplate for no gain at this size</td></tr>
+            <tr><td>Styling</td><td class="k">NativeWind v4</td><td>Tailwind velocity for layout; glass/glow primitives drop to <code>StyleSheet</code> + <code>expo-blur</code></td></tr>
+            <tr><td>Animation</td><td class="k">Reanimated 3</td><td>Runs on the UI thread. Non-negotiable for 60fps</td></tr>
+            <tr><td>Custom drawing</td><td class="k">Skia</td><td>The sonar <code>SignalLockScanner</code> is a custom painter — Skia is the only honest port of Flutter's <code>CustomPainter</code></td></tr>
+            <tr><td>Realtime</td><td class="k">socket.io-client</td><td>Auto-reconnect with backoff, rooms, ack callbacks. Raw WebSocket means rebuilding all of it</td></tr>
+            <tr><td>Maps</td><td class="k">react-native-maps</td><td>Google Maps both platforms, generous free tier. Mapbox is the P1 upgrade if styling limits bite</td></tr>
+            <tr><td>Storage</td><td class="k">SecureStore + MMKV</td><td>Keychain/Keystore for tokens; MMKV is far faster than AsyncStorage and backs the query persister</td></tr>
+            <tr><td>Images</td><td class="k">expo-image</td><td>Disk cache, blurhash placeholders, correct Android memory behaviour</td></tr>
+            <tr><td>Errors</td><td class="k">Sentry</td><td>Source-mapped stack traces from real devices</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wrap"><h3>Monorepo layout</h3></div>
+
+<pre class="wide"><code>fryyday/
+├── apps/
+│   ├── mobile/          <span class="c">Expo React Native app</span>
+│   ├── api/             <span class="c">NestJS HTTP + WebSocket server</span>
+│   └── worker/          <span class="c">BullMQ background jobs</span>
+├── packages/
+│   ├── <span class="n">contracts/</span>       <span class="c">★ Zod schemas + inferred types  (THE SPINE)</span>
+│   ├── domain/          <span class="c">Pure TS: ranking, trust, gates, credits</span>
+│   ├── ui/              <span class="c">Design tokens + RN primitives</span>
+│   └── config/          <span class="c">Shared eslint / tsconfig / prettier</span>
+├── infra/cdk/           <span class="c">AWS CDK — the entire cloud, in TypeScript</span>
+└── turbo.json           <span class="c">pnpm workspaces + Turborepo</span></code></pre>
+
+      <div class="wrap">
+        <div class="note">
+          <b class="lede">The most important directory in the repo</b>
+          <p style="margin-bottom:0"><code>packages/contracts</code> holds one Zod schema per API shape. The server validates requests with it; the client infers its TypeScript types from it. <strong>A backend change that breaks the app fails <code>pnpm typecheck</code> in CI before it can merge.</strong> That is how "no errors" is achieved structurally, rather than by testing harder.</p>
+        </div>
+
+        <h3>The one state rule</h3>
+        <p>Server state lives in TanStack Query and <em>only</em> there. Zustand holds session and ephemeral UI. <strong>Socket events do not write data — they invalidate query keys</strong>, and the refetch is the single source of truth. This makes "accept a request and watch the member count update everywhere" work by construction rather than by manual synchronisation.</p>
+
+        <h3>Offline is a requirement, not a nicety</h3>
+        <p>Users open this app on the move, on Indian mobile data, in basements and metros.</p>
+        <ul>
+          <li>The query cache persists to MMKV — the app opens with the last-known feed, chat and profile.</li>
+          <li>Mutations queue while offline and flush on reconnect.</li>
+          <li>Chat messages show a <em>pending</em> tick, then <em>sent</em>. <strong>Never silently dropped.</strong></li>
+          <li>A global banner states connection status; it is never a full-screen block.</li>
+          <li>On reconnect the socket replays messages missed since the last received <code>seq</code> per room.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══ 08 ═══ -->
+    <section id="backend">
+      <div class="sec-head"><span class="sec-num">08</span><h2>Backend</h2></div>
+      <div class="voices"><span class="v v-be">Backend</span><span class="v v-inf">Cloud</span></div>
+
+      <div class="tw wide" style="margin-top:26px">
+        <table>
+          <thead><tr><th>Concern</th><th>Choice</th><th>Rationale</th></tr></thead>
+          <tbody>
+            <tr><td>Runtime</td><td class="k">Node 22 LTS</td><td>Same language as the app; shared <code>contracts</code> and <code>domain</code> packages</td></tr>
+            <tr><td>Framework</td><td class="k">NestJS 11 · Fastify</td><td>DI, modules, guards, pipes, a first-class WebSocket gateway, auto-generated OpenAPI</td></tr>
+            <tr><td>ORM</td><td class="k">Prisma 6</td><td>Best-in-class migrations; PostGIS columns as <code>Unsupported</code>, spatial queries as typed raw SQL</td></tr>
+            <tr><td>Validation</td><td class="k">zod + nestjs-zod</td><td>The same schemas the client uses</td></tr>
+            <tr><td>Realtime</td><td class="k">Socket.IO + Redis adapter</td><td>Rooms, acks, reconnect; the adapter fans out across Fargate tasks</td></tr>
+            <tr><td>Jobs</td><td class="k">BullMQ</td><td>Expiries, reminders, push fan-out, image processing</td></tr>
+            <tr><td>Auth</td><td class="k">Amazon Cognito</td><td>Credential custody offloaded; custom auth flow to an SMS provider</td></tr>
+            <tr><td>Logging</td><td class="k">pino → CloudWatch</td><td>Structured JSON, <code>traceId</code> on every line</td></tr>
+            <tr><td>Tracing</td><td class="k">OpenTelemetry → X-Ray</td><td>Request → SQL → Redis spans</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wrap">
+        <div class="note hot">
+          <b class="lede">The regulatory landmine — start this in week 1</b>
+          <p><strong>Amazon SNS cannot deliver SMS to Indian numbers without TRAI DLT registration</strong> — you register the entity, the sender ID, and every message template. That is a <strong>1–3 week external process</strong>, and it has blocked more launches than any technical problem on this page.</p>
+          <p style="margin-bottom:0">Until it clears, use <strong>MSG91</strong> or <strong>Twilio Verify</strong> — both already DLT-registered and able to send on day one. The transport sits behind an <code>OtpTransport</code> interface, so swapping it later is a one-line change.</p>
+        </div>
+
+        <h3>Session handling</h3>
+        <ul>
+          <li><strong>Access token:</strong> JWT, 15 minutes, verified locally against cached Cognito JWKS — no network hop per request.</li>
+          <li><strong>Refresh token:</strong> 30 days, rotating, single-use, stored hashed in Postgres so it can be revoked.</li>
+          <li>Both live in <code>expo-secure-store</code> — Keychain and Android Keystore. <strong>Never AsyncStorage.</strong></li>
+          <li><strong>Rate limits:</strong> OTP request 3/hour/phone, 10/hour/IP. Verify 5 attempts → 15-minute lock.</li>
+        </ul>
+
+        <h3>One response envelope</h3>
+        <p>Every response uses the same shape, so the client has exactly one error path to handle.</p>
+      </div>
+
+<pre class="wide"><code><span class="c">// success</span>
+{ <span class="g">"data"</span>: { … }, <span class="g">"meta"</span>: { <span class="g">"requestId"</span>: <span class="n">"01J…"</span>, <span class="g">"cursor"</span>: <span class="n">"eyJ…"</span> } }
+
+<span class="c">// failure</span>
+{ <span class="g">"error"</span>: { <span class="g">"code"</span>: <span class="n">"PLAN_FULL"</span>,
+            <span class="g">"message"</span>: <span class="n">"This plan is already full."</span>,
+            <span class="g">"details"</span>: { <span class="g">"planId"</span>: <span class="n">"…"</span> },
+            <span class="g">"requestId"</span>: <span class="n">"01J…"</span> } }</code></pre>
+
+      <div class="wrap">
+        <p><code>code</code> is a <strong>closed TypeScript union</strong> in <code>packages/contracts</code>. The client switches on it exhaustively — adding a server error code without handling it client-side <strong>fails the build</strong>.</p>
+        <h3>Cross-cutting API rules</h3>
+        <ul>
+          <li><strong>Cursor pagination only</strong> — never offset, which skips rows under concurrent inserts.</li>
+          <li><code>Idempotency-Key</code> header <strong>required</strong> on every mutating POST, stored 24 hours.</li>
+          <li>Optimistic concurrency via <code>If-Match</code> on plan edits.</li>
+          <li>Per-user and per-IP rate limits in Redis.</li>
+        </ul>
+
+        <h3>Realtime</h3>
+        <p>A Socket.IO gateway on the same Fargate service, <code>transports: ['websocket']</code> only — skipping the polling fallback means <strong>the load balancer needs no sticky sessions</strong>, and the Redis adapter handles cross-task fan-out.</p>
+        <p>The JWT is verified in the handshake and the connection is bound to a <code>userId</code> server-side. Room joins are <strong>authorised against the database</strong>: a client asking to join a plan room it is not an accepted member of is refused. <strong>I1 is enforced here too</strong>, not only on REST.</p>
+
+        <h3>Background jobs</h3>
+        <p>Every timed behaviour lives here, never on the client.</p>
+      </div>
+
+      <div class="tw wide">
+        <table>
+          <thead><tr><th>Job</th><th>Schedule</th><th>Does</th></tr></thead>
+          <tbody>
+            <tr><td class="k">group.expire</td><td>delayed, exact</td><td>Closes a 24h group at <code>expires_at</code>, emits <code>group.expired</code></td></tr>
+            <tr><td class="k">group.expiring-soon</td><td>T−1h</td><td>Emits a warning + push</td></tr>
+            <tr><td class="k">invite.expire</td><td>delayed</td><td>Expires an invite; <strong>refunds the credit if never seen</strong></td></tr>
+            <tr><td class="k">plan.remind</td><td>T−2h</td><td>Push to all members</td></tr>
+            <tr><td class="k">plan.close</td><td>T+3h</td><td>Opens the confirm + rate flow</td></tr>
+            <tr><td class="k">credits.daily-grant</td><td>cron 00:00 IST</td><td>Grants the daily free credits</td></tr>
+            <tr><td class="k">image.process</td><td>on S3 event</td><td>Sharp → resized variants + blurhash</td></tr>
+            <tr><td class="k">push.fanout</td><td>on demand</td><td>Batched, <strong>quiet-hours aware</strong>, per-user daily cap</td></tr>
+            <tr><td class="k">moderation.triage</td><td>on report</td><td>Enriches and queues for human review</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wrap">
+        <h3>Push notifications</h3>
+        <p><strong>Push is the single largest irritation vector in a social app</strong>, so it is throttled by design: a hard cap of <strong>5 pushes per user per day</strong>, quiet hours honoured <em>server-side</em> (the job checks, never the device), every category individually opt-out, every push deep-linking to the exact screen — and <strong>no growth or marketing pushes in v1.0. Not one.</strong></p>
+
+        <h3>Identity verification</h3>
+        <p>v1's "verification" was a 2.2-second animation. <strong>A trust badge that is not earned is worse than no badge</strong>, because it launders risk. v2.0 uses <strong>AWS Rekognition Face Liveness</strong> — native to the stack, returns a confidence score and reference image. Selfie-only is the right v1 bar: it proves a live human without collecting government ID. Below threshold goes to manual review. <strong>Fail closed, never open.</strong></p>
+      </div>
+    </section>
+
+    <!-- ═══ 09 ═══ -->
+    <section id="domain">
+      <div class="sec-head"><span class="sec-num">09</span><h2>Domain logic</h2></div>
+      <div class="voices"><span class="v v-be">Backend</span><span class="v v-pm">Product</span></div>
+
+      <div class="wrap">
+        <p style="margin-top:22px">Pure TypeScript, zero I/O, 100% unit-tested. <strong>Ported from the v1 Dart engines, which were correct and well-tested — this is the part of v1 with the most value.</strong> It runs on the <strong>server</strong>; the client never decides eligibility, cost or trust.</p>
+
+        <h3>Hard gates — run at every tier, never overridden</h3>
+        <p>A candidate is excluded if <em>any</em> is true: is self · blocked in either direction · already a member · plan is full · plan expired · outside the radius · location unknown or stale · women-only mismatch · receiver in quiet hours · receiver hit their daily cap · declined this host within the 7-day cooldown.</p>
+        <p><strong>These run as SQL <code>WHERE</code> clauses, not application filters</strong>, so no code path can forget them.</p>
+
+        <h3>Discovery ordering — ship the deterministic sort</h3>
+        <p>Tier 1 is <em>soonest</em> (default) or <em>nearest</em>. Spam is impossible by construction, and users can predict the result — which matters more than relevance at low liquidity.</p>
+        <p>Tier 3 — the weighted ranking — is built and <strong>parked</strong>:</p>
+      </div>
+
+<pre class="wide"><code>score = w₁·proximity + w₂·interestOverlap + w₃·reputation + w₄·availability
+        − w₅·inviteFatigue − w₆·declineHistory      <span class="c">// all normalised to [0,1]</span></code></pre>
+
+      <div class="wrap">
+        <div class="note">
+          <b class="lede">Turn it on only when there is data to fit it</b>
+          <p style="margin-bottom:0">Enable it behind a flag that A/B tests against Tier 1. <strong>If it does not beat the deterministic sort on invite→join conversion, it stays off.</strong> Sophistication before liquidity is the classic way to lose a year.</p>
+        </div>
+
+        <h3>Trust score</h3>
+      </div>
+
+<pre class="wide"><code>trust = bayesianStars(rating, count, prior = 3.5, m = 10) · 0.6
+      + reliability(shownUp / committed)                  · 0.4
+      − noShowPenalty(noShows)</code></pre>
+
+      <div class="wrap">
+        <p>The Bayesian shrink is what makes it honest: <strong>a single 5.0 ranks below a dense 4.8.</strong> New users start at the prior, not at zero — otherwise nobody can ever get their first plan.</p>
+
+        <h3>Invite credits — an anti-spam budget, not a paywall</h3>
+        <p>Reach is scarce so that unwanted contact is <em>structurally</em> rare. Three free credits are granted daily at 00:00 IST, once per calendar day, enforced by a unique index. Spending is a <strong>single Postgres transaction</strong> — <code>UPDATE … WHERE credits &gt;= cost</code> plus a ledger insert, with a <code>CHECK (credits &gt;= 0)</code> constraint as the final backstop.</p>
+        <p><strong>The balance always equals the sum of the ledger</strong>, asserted by a nightly reconciliation job that pages on mismatch.</p>
+
+        <h3>Business rules — each one an enforced test</h3>
+        <ol>
+          <li>Idempotent join — one request per (plan, user).</li>
+          <li>One live invite per (plan, person) per sender.</li>
+          <li>Credits atomic, never negative, every movement ledgered.</li>
+          <li>Daily credits once per calendar day.</li>
+          <li>Ratings once per (plan, person), clamped 1–5, only after attendance.</li>
+          <li>Attendance confirmed once; increments <code>plans_completed</code>.</li>
+          <li>Blocking is idempotent, reversible, and <strong>bidirectional</strong> in visibility.</li>
+          <li>Full plans reject new members even on an accepted request.</li>
+          <li><strong>Chat membership is created on acceptance, never before (I1).</strong></li>
+          <li>Finds deduped per person; blocked when an active group already exists.</li>
+          <li>Cancelling a plan notifies every member and refunds spent credits.</li>
+          <li>A plan may not be edited after it starts.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ═══ 10 ═══ -->
+    <section id="data">
+      <div class="sec-head"><span class="sec-num">10</span><h2>Data model</h2></div>
+      <div class="voices"><span class="v v-be">Backend</span></div>
+
+      <div class="wrap">
+        <p style="margin-top:22px">PostgreSQL 16 + PostGIS 3.4. The full schema is in the repository; what follows is the part that carries the invariants.</p>
+      </div>
+
+<pre class="wide"><code><span class="c">-- membership == chat access. I1 lives in this table.</span>
+CREATE TABLE plan_members (
+  plan_id   UUID NOT NULL REFERENCES plans(id) ON DELETE CASCADE,
+  user_id   UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  role      TEXT NOT NULL DEFAULT <span class="n">'member'</span>,
+  joined_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  attended  BOOLEAN,
+  PRIMARY KEY (plan_id, user_id)
+);
+
+CREATE TABLE join_requests (
+  id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  plan_id  UUID NOT NULL REFERENCES plans(id) ON DELETE CASCADE,
+  user_id  UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  status   request_status_t NOT NULL DEFAULT <span class="n">'pending'</span>,
+  <span class="g">UNIQUE (plan_id, user_id)</span>          <span class="c">-- business rule #1, in the schema</span>
+);
+
+<span class="c">-- business rule #4: daily credits, once per calendar day</span>
+CREATE UNIQUE INDEX idx_ledger_daily
+  ON credit_ledger (user_id, (created_at AT TIME ZONE <span class="n">'Asia/Kolkata'</span>)::date)
+  WHERE reason = <span class="n">'daily_grant'</span>;
+
+<span class="c">-- business rule #5: one rating per pair, per plan</span>
+CREATE TABLE ratings (
+  plan_id  UUID REFERENCES plans(id) ON DELETE CASCADE,
+  rater_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  ratee_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  stars    SMALLINT NOT NULL CHECK (stars BETWEEN 1 AND 5),
+  <span class="g">PRIMARY KEY (plan_id, rater_id, ratee_id)</span>
+);</code></pre>
+
+      <div class="wrap">
+        <div class="note">
+          <b class="lede">Read those unique indexes again</b>
+          <p style="margin-bottom:0">Business rules 1, 4 and 5 are enforced by the <strong>database</strong>, not by application code. Application logic can be bypassed by a race, a retry or a bug. <strong>A unique index cannot.</strong> Put every invariant you can into the schema.</p>
+        </div>
+
+        <h3>The core spatial query</h3>
+      </div>
+
+<pre class="wide"><code>SELECT p.id, p.title, p.starts_at, p.member_count, p.max_size,
+       ROUND((ST_Distance(p.location, $1::geography) / 1000)::numeric, 1) AS distance_km
+FROM plans p
+JOIN users h ON h.id = p.host_id
+WHERE p.status = <span class="n">'open'</span>
+  AND p.starts_at &gt; now()
+  AND <span class="g">ST_DWithin</span>(p.location, $1::geography, $2)         <span class="c">-- metres; uses the GIST index</span>
+  AND NOT EXISTS (SELECT 1 FROM blocks b                <span class="c">-- I4, bidirectional, in SQL</span>
+                  WHERE (b.blocker_id = $3 AND b.blocked_id = p.host_id)
+                     OR (b.blocker_id = p.host_id AND b.blocked_id = $3))
+  AND (p.join_rule &lt;&gt; <span class="n">'women_only'</span> OR $4::gender_t = <span class="n">'woman'</span>)  <span class="c">-- hard gate, in SQL</span>
+ORDER BY p.starts_at ASC
+LIMIT $5;</code></pre>
+
+      <div class="wrap">
+        <div class="note cold">
+          <b class="lede">The one detail that decides this query's fate</b>
+          <p style="margin-bottom:0"><code>ST_DWithin</code> — <em>not</em> <code>ST_Distance &lt; x</code> — is the whole trick. Only <code>ST_DWithin</code> can use the GIST index. The wrong form is a sequential scan over every plan, and that is the difference between <strong>8 milliseconds and 4 seconds</strong>.</p>
+        </div>
+
+        <h3>Location privacy — how I5 is implemented</h3>
+        <ol>
+          <li>Exact coordinates are stored, and used <strong>only</strong> inside SQL predicates.</li>
+          <li>The API returns a <strong>band</strong>: <code>&lt;1 km</code>, <code>1–2 km</code>, <code>2–5 km</code>, <code>5–10 km</code>, <code>10 km+</code>.</li>
+          <li>Each user gets a <strong>stable random offset</strong> seeded from their id (100–300m), so repeated queries from different points cannot triangulate them.</li>
+          <li><code>UserPublicDto</code> has <strong>no coordinate field at all</strong>. It cannot leak by accident, because there is no field to populate.</li>
+          <li>Updates throttled to one per 5 minutes, foreground only. <strong>No background location tracking in v1.0</strong> — the trust cost is not worth the feature.</li>
+        </ol>
+
+        <h3>Retention and India's DPDP Act 2023</h3>
+      </div>
+
+      <div class="tw wide">
+        <table>
+          <thead><tr><th>Data</th><th>Retention</th></tr></thead>
+          <tbody>
+            <tr><td>Account</td><td>Until deletion. Soft-delete → <strong>hard purge after 30 days</strong></td></tr>
+            <tr><td>Messages</td><td>12 months, then purged</td></tr>
+            <tr><td>Location</td><td>Last position only; <strong>no history stored</strong></td></tr>
+            <tr><td>Verification face vector</td><td>24 months, encrypted with a dedicated KMS key</td></tr>
+            <tr><td>Reports and moderation</td><td>24 months — safety and legal evidence</td></tr>
+            <tr><td>Analytics</td><td>Pseudonymised, no PII</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wrap">
+        <p><code>DELETE /v1/me</code> and <code>GET /v1/me/export</code> are <strong>P0, not P1</strong>. Under DPDP a data-principal request has a statutory response window; building the endpoint after launch means answering those by hand.</p>
+      </div>
+    </section>
+
+    <!-- ═══ 11 ═══ -->
+    <section id="noerrors">
+      <div class="sec-head"><span class="sec-num">11</span><h2>"No errors" — seven layers</h2></div>
+      <div class="voices"><span class="v v-qa">Quality</span><span class="v v-be">Backend</span><span class="v v-mob">React Native</span></div>
+
+      <div class="wrap">
+        <p style="margin-top:22px">This was the most-repeated requirement, so it gets a strategy rather than a promise. <strong>Bug-free software is not achieved by testing harder — it is achieved by making broken states unrepresentable.</strong> Seven layers, cheapest first.</p>
+      </div>
+
+      <div class="layers wide">
+        <div><div><b>The compiler</b><span><code>strict: true</code>, plus <code>noUncheckedIndexedAccess</code>, <code>exactOptionalPropertyTypes</code>, <code>noFallthroughCasesInSwitch</code>. <strong><code>any</code> is banned by lint.</strong> Discriminated unions and <code>never</code>-exhaustive switches mean adding a new status forces every consumer to handle it.</span></div></div>
+        <div><div><b>Shared contracts — the big one</b><span>One Zod schema per API shape. The server validates with it; the client infers types from it. <strong>A backend change that breaks the app fails typecheck before merge.</strong> This single decision eliminates the most common class of production bug in mobile apps: client/server drift.</span></div></div>
+        <div><div><b>Runtime validation at every boundary</b><span>Nothing is trusted — HTTP bodies, socket payloads, push payloads, deep links, and environment variables. Env vars are Zod-parsed at boot, so <strong>the process refuses to start if one is missing</strong> rather than failing at 3am on the first request.</span></div></div>
+        <div><div><b>Database constraints</b><span><code>NOT NULL</code>, <code>CHECK</code>, <code>FOREIGN KEY</code> and the unique indexes above. The last line of defence, and the only one a race condition cannot beat.</span></div></div>
+        <div><div><b>Automated tests</b><span>Unit (Vitest, ≥90% on <code>domain</code>) · integration against a <strong>real Postgres+PostGIS</strong> via Testcontainers · contract diffing · <strong>five named invariant tests for I1–I5 that cannot be skipped</strong> · component tests across all states · Maestro E2E on real iOS and Android · k6 load at 500 concurrent.</span></div></div>
+        <div><div><b>Runtime resilience</b><span>Error boundaries per navigator stack, so <strong>one screen crashing never white-screens the app</strong>. Typed error envelope with exhaustive handling · retry with exponential backoff · circuit breakers on external providers · graceful degradation (no GPS → city-level feed; no socket → polling) · Sentry on both tiers with source maps uploaded by CI.</span></div></div>
+        <div><div><b>Definition of Done</b><span>The checklist below. <strong>No PR merges unless every box is ticked.</strong> This is the layer that actually prevents the mess, because it runs on every change rather than at the end.</span></div></div>
+      </div>
+
+      <div class="wrap"><h4>Definition of Done</h4></div>
+      <ul class="dod wide">
+        <li><code>pnpm typecheck</code> clean · <code>pnpm lint</code> clean · <code>pnpm test</code> green</li>
+        <li>All five UI states implemented — loading, empty, error, offline, success</li>
+        <li>Accessibility: labels, roles, ≥44pt targets, contrast verified</li>
+        <li>Loading skeletons — <strong>no bare spinners</strong></li>
+        <li>Errors are human-readable and actionable, never a raw code</li>
+        <li>Works offline, or degrades explicitly</li>
+        <li>No hardcoded colours, strings or URLs</li>
+        <li>New endpoint → contract schema + integration test + OpenAPI entry</li>
+        <li>Database change → a <strong>reversible</strong> migration, tested up <em>and</em> down</li>
+        <li>Touches an invariant → the matching E2E test updated</li>
+        <li>Tested on a <strong>physical low-end Android</strong>, not just a simulator</li>
+        <li>No <code>console.log</code>, no commented-out code, no <code>TODO</code> without a ticket</li>
+      </ul>
+    </section>
+
+    <!-- ═══ 12 ═══ -->
+    <section id="nfr">
+      <div class="sec-head"><span class="sec-num">12</span><h2>Performance targets</h2></div>
+      <div class="voices"><span class="v v-inf">Cloud</span><span class="v v-qa">Quality</span></div>
+
+      <div class="tw wide" style="margin-top:26px">
+        <table>
+          <thead><tr><th>Requirement</th><th>Target</th></tr></thead>
+          <tbody>
+            <tr><td>API latency — p50 / p99</td><td class="num">&lt; 120 ms / <strong>&lt; 400 ms</strong></td></tr>
+            <tr><td>Feed query (PostGIS, 50k users)</td><td class="num"><strong>&lt; 80 ms</strong></td></tr>
+            <tr><td>Message delivery, send → peer receives</td><td class="num"><strong>&lt; 250 ms</strong> p95</td></tr>
+            <tr><td>App cold start → interactive</td><td class="num"><strong>&lt; 2.0 s</strong> on a Pixel 6a</td></tr>
+            <tr><td>Crash-free sessions</td><td class="num"><strong>≥ 99.5%</strong></td></tr>
+            <tr><td>API availability</td><td class="num"><strong>99.9%</strong> ≈ 43 min/month</td></tr>
+            <tr><td>Concurrent users</td><td class="num">500 → 5,000 without re-architecture</td></tr>
+            <tr><td>RPO / RTO</td><td class="num">5 min (PITR) / 1 hour</td></tr>
+            <tr><td>Binary size</td><td class="num">&lt; 60 MB Android · &lt; 90 MB iOS</td></tr>
+            <tr><td>Battery</td><td class="num">No background location · &lt; 2%/hour active</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══ 13 ═══ -->
+    <section id="aws">
+      <div class="sec-head"><span class="sec-num">13</span><h2>AWS &amp; deployment</h2></div>
+      <div class="voices"><span class="v v-inf">Cloud</span></div>
+
+      <div class="arch wide">
+        <svg viewBox="0 0 900 430" role="img" aria-label="AWS architecture: mobile clients through CloudFront and a load balancer to ECS Fargate services, backed by RDS PostGIS, ElastiCache, Cognito and S3.">
+          <defs>
+            <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#919378"></path>
+            </marker>
+            <marker id="arn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#EAFF00"></path>
+            </marker>
+          </defs>
+          <style>
+            .bx{fill:#0A0A0B;stroke:rgba(145,147,120,.3);stroke-width:1;rx:8}
+            .bxk{fill:#0A0A0B;stroke:rgba(234,255,0,.4);stroke-width:1;rx:8}
+            .tl{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;fill:#E3E2E7}
+            .tk{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;fill:#EAFF00}
+            .ts{font-family:'JetBrains Mono',monospace;font-size:9px;fill:#919378}
+            .ln{stroke:rgba(145,147,120,.42);stroke-width:1;fill:none}
+            .lnk{stroke:rgba(234,255,0,.5);stroke-width:1.2;fill:none}
+            .zn{fill:none;stroke:rgba(145,147,120,.18);stroke-width:1;stroke-dasharray:3 4;rx:10}
+            .zt{font-family:'JetBrains Mono',monospace;font-size:8.5px;fill:#919378;letter-spacing:.12em}
+          </style>
+
+          <rect class="zn" x="196" y="86" width="690" height="330"></rect>
+          <text class="zt" x="206" y="103">VPC · ap-south-1 · 2 AVAILABILITY ZONES</text>
+
+          <rect class="bxk" x="16" y="24" width="140" height="46"></rect>
+          <text class="tk" x="30" y="45">iOS + Android</text>
+          <text class="ts" x="30" y="59">React Native · Expo</text>
+
+          <rect class="bx" x="220" y="24" width="140" height="46"></rect>
+          <text class="tl" x="234" y="45">CloudFront</text>
+          <text class="ts" x="234" y="59">+ WAF rate limiting</text>
+
+          <rect class="bx" x="424" y="24" width="160" height="46"></rect>
+          <text class="tl" x="438" y="45">Load Balancer</text>
+          <text class="ts" x="438" y="59">HTTPS + WSS · ACM</text>
+
+          <rect class="bx" x="648" y="24" width="140" height="46"></rect>
+          <text class="tl" x="662" y="45">S3 + OAC</text>
+          <text class="ts" x="662" y="59">avatars · covers</text>
+
+          <rect class="bxk" x="228" y="132" width="200" height="60"></rect>
+          <text class="tk" x="244" y="155">ECS Fargate · api</text>
+          <text class="ts" x="244" y="170">NestJS + Socket.IO</text>
+          <text class="ts" x="244" y="183">2–10 tasks · autoscaled</text>
+
+          <rect class="bx" x="228" y="228" width="200" height="60"></rect>
+          <text class="tl" x="244" y="251">ECS Fargate · worker</text>
+          <text class="ts" x="244" y="266">BullMQ jobs</text>
+          <text class="ts" x="244" y="279">1–4 tasks</text>
+
+          <rect class="bx" x="512" y="132" width="180" height="52"></rect>
+          <text class="tl" x="528" y="153">RDS PostgreSQL 16</text>
+          <text class="ts" x="528" y="168">PostGIS · Multi-AZ</text>
+
+          <rect class="bx" x="512" y="204" width="180" height="52"></rect>
+          <text class="tl" x="528" y="225">ElastiCache Valkey</text>
+          <text class="ts" x="528" y="240">cache · limits · fan-out</text>
+
+          <rect class="bx" x="512" y="276" width="180" height="52"></rect>
+          <text class="tl" x="528" y="297">Cognito</text>
+          <text class="ts" x="528" y="312">+ Secrets Manager</text>
+
+          <rect class="bx" x="512" y="348" width="180" height="52"></rect>
+          <text class="tl" x="528" y="369">Rekognition</text>
+          <text class="ts" x="528" y="384">face liveness · I2</text>
+
+          <rect class="bx" x="740" y="204" width="130" height="52"></rect>
+          <text class="tl" x="754" y="225">CloudWatch</text>
+          <text class="ts" x="754" y="240">logs · X-Ray</text>
+
+          <rect class="bx" x="740" y="276" width="130" height="52"></rect>
+          <text class="tl" x="754" y="297">Expo Push</text>
+          <text class="ts" x="754" y="312">APNs · FCM</text>
+
+          <path class="lnk" d="M156,47 L214,47" marker-end="url(#arn)"></path>
+          <path class="lnk" d="M360,47 L418,47" marker-end="url(#arn)"></path>
+          <path class="ln" d="M584,47 L642,47" marker-end="url(#ar)"></path>
+          <path class="lnk" d="M504,70 L504,100 L328,100 L328,126" marker-end="url(#arn)"></path>
+          <path class="ln" d="M428,158 L506,158" marker-end="url(#ar)"></path>
+          <path class="ln" d="M428,168 L470,168 L470,228 L506,228" marker-end="url(#ar)"></path>
+          <path class="ln" d="M428,178 L452,178 L452,300 L506,300" marker-end="url(#ar)"></path>
+          <path class="ln" d="M428,186 L440,186 L440,372 L506,372" marker-end="url(#ar)"></path>
+          <path class="ln" d="M428,248 L470,248 L470,238 L506,238" marker-end="url(#ar)"></path>
+          <path class="ln" d="M428,258 L490,258 L490,172 L506,172" marker-end="url(#ar)"></path>
+          <path class="ln" d="M428,278 L700,278 L700,300 L734,300" marker-end="url(#ar)"></path>
+          <path class="ln" d="M692,230 L734,230" marker-end="url(#ar)"></path>
+        </svg>
+      </div>
+
+      <div class="wrap">
+        <div class="note hot">
+          <b class="lede">The cost trap nobody warns you about</b>
+          <p>A <strong>NAT Gateway is ~$32/month plus data processing</strong> — by far the largest fixed line item in a small AWS account. Avoid it entirely: put <strong>VPC endpoints</strong> for ECR, S3 (gateway, free), Secrets Manager, CloudWatch Logs and KMS in the private subnets.</p>
+          <p style="margin-bottom:0">Fargate then pulls images and writes logs <strong>with no NAT at all</strong>. This one decision cuts the monthly bill by roughly a third.</p>
+        </div>
+
+        <h3>Why Fargate, and not Lambda</h3>
+      </div>
+
+      <div class="tw wide">
+        <table>
+          <thead><tr><th>Dimension</th><th style="color:var(--ok)">Fargate ✓</th><th style="color:var(--bad)">Lambda ✕</th></tr></thead>
+          <tbody>
+            <tr><td>WebSockets</td><td>Native, long-lived, cheap</td><td>Needs API Gateway WS + a DynamoDB connection table</td></tr>
+            <tr><td>Cold starts</td><td><strong>None</strong></td><td>200–900ms on a p99 request — unacceptable for chat</td></tr>
+            <tr><td>DB connections</td><td>A normal pool</td><td>Needs RDS Proxy or you exhaust connections under load</td></tr>
+            <tr><td>Local dev</td><td>The identical Docker image</td><td>Emulated, always subtly different</td></tr>
+            <tr><td>Cost at 5k DAU</td><td class="num">~$45/mo, predictable</td><td>Cheaper idle, spikier, harder to forecast</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wrap"><p><strong>Chat is the deciding factor.</strong> A realtime app wants a warm, connection-holding process.</p>
+        <h3>The whole cloud, in one command</h3>
+      </div>
+
+<pre class="wide"><code><span class="c"># ── prerequisites ────────────────────────────────────────────</span>
+aws configure                 <span class="c"># region: ap-south-1 (Mumbai)</span>
+pnpm install
+cd infra/cdk &amp;&amp; pnpm cdk bootstrap aws://&lt;ACCOUNT_ID&gt;/ap-south-1
+
+<span class="c"># ── secrets, once per environment ────────────────────────────</span>
+aws secretsmanager create-secret --name fryyday/prod/db  --secret-string <span class="n">'{"password":"…"}'</span>
+aws secretsmanager create-secret --name fryyday/prod/sms --secret-string <span class="n">'{"apiKey":"…"}'</span>
+
+<span class="c"># ── the entire cloud, one command (~25 min first time) ───────</span>
+<span class="n">pnpm cdk deploy FryydayProd --require-approval never</span>
+
+<span class="c"># ── database migrations ──────────────────────────────────────</span>
+pnpm --filter api prisma migrate deploy
+
+<span class="c"># ── every deploy after this (~6 min, zero downtime) ──────────</span>
+git push origin main   <span class="c"># CI: test → build → ECR → ECS rolling update</span></code></pre>
+
+      <div class="wrap">
+        <div class="note cold">
+          <b class="lede">Deploy safety</b>
+          <p style="margin-bottom:0">The ECS deployment circuit breaker gives <strong>automatic rollback</strong>. New tasks must pass <code>/health/deep</code> — which checks database, Redis and Cognito reachability — before the load balancer shifts traffic. <strong>A bad deploy rolls itself back in about 90 seconds, without paging anyone.</strong></p>
+        </div>
+
+        <h3>Monthly cost</h3>
+      </div>
+
+      <div class="tw wide">
+        <table>
+          <thead><tr><th>Service</th><th>dev + staging</th><th>prod @ 5k DAU</th></tr></thead>
+          <tbody>
+            <tr><td>ECS Fargate — api + worker</td><td class="num">$18</td><td class="num">$52</td></tr>
+            <tr><td>RDS PostgreSQL</td><td class="num">$14</td><td class="num">$62</td></tr>
+            <tr><td>ElastiCache Valkey</td><td class="num">$11</td><td class="num">$26</td></tr>
+            <tr><td>Load balancer</td><td class="num">$17</td><td class="num">$19</td></tr>
+            <tr><td>CloudFront + S3</td><td class="num">$3</td><td class="num">$12</td></tr>
+            <tr><td>Cognito</td><td class="num">free</td><td class="num">free &lt;50k MAU</td></tr>
+            <tr><td>SMS OTP (MSG91)</td><td class="num">$5</td><td class="num"><strong>$28</strong> — scales with signups</td></tr>
+            <tr><td>Rekognition liveness</td><td class="num">$2</td><td class="num">$18</td></tr>
+            <tr><td>CloudWatch + X-Ray</td><td class="num">$8</td><td class="num">$22</td></tr>
+            <tr><td>VPC endpoints — no NAT</td><td class="num">$15</td><td class="num">$22</td></tr>
+            <tr><td><strong>Total</strong></td><td class="num"><strong>≈ $93/mo</strong></td><td class="num"><strong style="color:var(--neon)">≈ $261/mo</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wrap">
+        <p>Plus <strong>Apple Developer $99/yr</strong> and <strong>Google Play $25 once</strong>. The cheapest correct v1 — single-AZ RDS, one Fargate task, no CloudFront — is <strong>≈ $95/month</strong>. Scale up on real traffic, not on hope.</p>
+
+        <h3>CI/CD</h3>
+        <p><strong>On PR:</strong> typecheck → lint → unit → integration → build both apps → <strong>invariant tests I1–I5</strong>. All blocking. <strong>On merge:</strong> image to ECR tagged with the commit SHA → deploy staging → smoke tests → manual approval → deploy prod → Sentry release + source maps. <strong>Mobile:</strong> EAS build on a version tag, then submit to both stores.</p>
+        <div class="note">
+          <b class="lede">Over-the-air updates, and their hard boundary</b>
+          <p style="margin-bottom:0"><code>eas update</code> ships any JavaScript or asset change in minutes instead of a 24–48 hour review. It <strong>cannot</strong> change native code — a new module, a permission, an SDK bump — which still needs a store build. Both stores permit OTA for bug fixes; do not use it to ship features that materially change what was reviewed.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 14 ═══ -->
+    <section id="ops">
+      <div class="sec-head"><span class="sec-num">14</span><h2>Observability</h2></div>
+      <div class="voices"><span class="v v-inf">Cloud</span></div>
+      <div class="wrap">
+        <p style="margin-top:22px"><strong>Alarms that page:</strong> API 5xx &gt; 1% for 5 min · p99 &gt; 1s for 10 min · ECS task restart loop · RDS CPU &gt; 80% or storage &lt; 15% · connections &gt; 80% · Redis evictions &gt; 0 · socket disconnect-rate spike · <strong>credit-ledger reconciliation mismatch</strong> · SMS delivery failure &gt; 5%.</p>
+        <p><strong>Dashboards:</strong> the funnel — install → verified → first request → first accept → <strong>first confirmed meetup</strong> — plus realtime health, database slow queries, and crash-free rate.</p>
+        <div class="note hot">
+          <b class="lede">Never log PII</b>
+          <p style="margin-bottom:0">Every log line is JSON with <code>traceId</code>, <code>userId</code>, <code>route</code>, <code>durationMs</code>. <strong>Never</strong> phone numbers, exact coordinates, message bodies or OTP codes — and a CI lint rule greps for those field names inside log calls.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 15 ═══ -->
+    <section id="risks">
+      <div class="sec-head"><span class="sec-num">15</span><h2>Risks</h2></div>
+      <div class="voices"><span class="v v-pm">Product</span></div>
+
+      <div class="tw wide" style="margin-top:26px">
+        <table>
+          <thead><tr><th>#</th><th>Risk</th><th>Sev</th><th>Mitigation</th></tr></thead>
+          <tbody>
+            <tr><td class="id">R1</td><td><strong>Empty map at launch</strong> — no liquidity, so nobody returns</td><td><span class="sev c">Critical</span></td><td>Seed 20–30 real recurring hosts <em>before</em> launch. Launch <strong>one neighbourhood</strong>, not a city</td></tr>
+            <tr><td class="id">R2</td><td><strong>A safety incident</strong></td><td><span class="sev c">Critical</span></td><td>I1–I5, real verification, moderation SLA &lt;2h, SOS, public venues, an incident runbook written <em>before</em> launch</td></tr>
+            <tr><td class="id">R3</td><td>SMS / DLT registration blocks launch</td><td><span class="sev h">High</span></td><td><strong>Start DLT in week 1.</strong> MSG91 as the day-one transport behind an interface</td></tr>
+            <tr><td class="id">R4</td><td>App Store rejection — social apps get scrutiny</td><td><span class="sev h">High</span></td><td>TestFlight in week 8, not week 13. Apple Guideline 1.2 requires moderation, blocking, reporting <em>and</em> account deletion all visible and working</td></tr>
+            <tr><td class="id">R5</td><td>RN performance on low-end Android</td><td><span class="sev h">High</span></td><td>Max 3 blur views per screen, animation on the UI thread, <strong>test on a real ₹12k device weekly</strong></td></tr>
+            <tr><td class="id">R6</td><td>The rebuild takes longer than v1 did</td><td><span class="sev h">High</span></td><td>Port design system and domain logic first — both largely mechanical. UI is the only genuine rewrite</td></tr>
+            <tr><td class="id">R7</td><td>Location privacy breach</td><td><span class="sev c">Critical</span></td><td>I5, plus a DTO with no coordinate field, plus a test asserting no response ever carries another user's lat/lng</td></tr>
+            <tr><td class="id">R8</td><td>Cost overrun</td><td><span class="sev m">Medium</span></td><td>Budget alarms at $150 / $300 / $500; no NAT gateway; right-size after two weeks of real data</td></tr>
+            <tr><td class="id">R9</td><td>Spam and bad actors at scale</td><td><span class="sev m">Medium</span></td><td>Credits, caps, cooldowns, verification, WAF rate limiting, shadow-ban capability</td></tr>
+            <tr><td class="id">R10</td><td>Solo-founder bus factor</td><td><span class="sev h">High</span></td><td>Everything in infrastructure-as-code, an ADR per decision, runbooks — <strong>no manual console changes, ever</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══ 16 ═══ -->
+    <section id="plan">
+      <div class="sec-head"><span class="sec-num">16</span><h2>Delivery plan</h2></div>
+      <div class="voices"><span class="v v-pm">Product</span></div>
+
+      <div class="wrap">
+        <p style="margin-top:22px">Every milestone ships <strong>green</strong>: typecheck clean, tests passing, deployed to staging, demoable. <strong>No milestone starts until the previous one's exit gate is met.</strong></p>
+      </div>
+
+      <div class="ms wide">
+        <article><span class="m">M0</span><span class="w">Week 1</span><div><b>Foundations</b><span>Monorepo, CDK skeleton, dev environment live, CI green, Expo app boots, Postgres+PostGIS migrating. <strong>Start DLT registration.</strong></span><span class="gate"><code>cdk deploy dev</code> succeeds; the app fetches <code>/health</code> from real AWS</span></div></article>
+
+        <article><span class="m">M1</span><span class="w">Weeks 2–3</span><div><b>Design system + auth</b><span>All UI primitives with every state, fonts bundled, a Storybook screen. Real SMS OTP end-to-end. Profile setup with S3 avatar upload.</span><span class="gate">Log in on a real phone with a real SMS; every primitive renders in every state</span></div></article>
+
+        <article><span class="m">M2</span><span class="w">Weeks 4–5</span><div><b>The core loop, for real</b><span>Create plan → PostGIS feed → detail → request → accept → membership. All server-side.</span><span class="gate">Two physical phones: A hosts, B requests, A accepts, B is a member. The I1 test passes</span></div></article>
+
+        <article><span class="m">M3</span><span class="w">Weeks 6–7</span><div><b>Realtime + chat</b><span>Socket.IO, rooms, presence, offline queue, push notifications, and the Signal Lock Scanner running on real events.</span><span class="gate">Two phones chat in &lt;250ms. Kill the app, reopen — history intact. Push arrives when backgrounded</span></div></article>
+
+        <article><span class="m">M4</span><span class="w">Weeks 8–9</span><div><b>Trust, safety, and closing the loop</b><span>Verification, attendance, ratings, trust score, block/report/SOS, quiet hours, credits + ledger, account deletion and export.</span><span class="gate">I1–I5 all pass. A report reaches a human. The ledger reconciles</span></div></article>
+
+        <article><span class="m">M5</span><span class="w">Week 10</span><div><b>Find path + map</b><span>Discover radar, Find, 24-hour groups with server-side expiry, real map tiles, clustering.</span><span class="gate">A Find becomes a group, and the group expires on schedule with the app closed</span></div></article>
+
+        <article><span class="m">M6</span><span class="w">Week 11</span><div><b>Liquidity + polish</b><span>Seed hosts, recurring plans, onboarding that guarantees a joinable plan, empty states, final copy, Hindi strings extracted.</span><span class="gate">A brand-new account sees ≥3 joinable plans within 60 seconds</span></div></article>
+
+        <article><span class="m">M7</span><span class="w">Weeks 12–13</span><div><b>Hardening + beta</b><span>Load test at 500 concurrent, E2E on both platforms, accessibility audit, security review, production deploy, TestFlight and Play internal testing with 30 real users.</span><span class="gate">Crash-free ≥99.5%, p99 &lt;400ms, zero P0 bugs from beta</span></div></article>
+
+        <article><span class="m">M8</span><span class="w">Week 14</span><div><b>Launch</b><span>App Store and Play submission, monitoring live, on-call rota, incident runbook.</span><span class="gate">Approved and live in both stores</span></div></article>
+      </div>
+
+      <div class="wrap">
+        <h3>Team</h3>
+        <p>The minimum viable team is <strong>three people over 14 weeks</strong>: a React Native engineer (mobile app, UI package, releases), a backend engineer (API, worker, domain, database), and a full-stack/DevOps engineer (CDK, CI/CD, contracts, filling gaps). Product and design sit with you, part-time: scope, copy, design QA, store assets.</p>
+        <div class="note hot">
+          <b class="lede">If you are building this solo</b>
+          <p style="margin-bottom:0">It is achievable, but the honest number is <strong>24–30 weeks, not 14</strong>. The sequencing above still holds — do not parallelise it, and <strong>do not skip M7</strong>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 17 ═══ -->
+    <section id="decisions">
+      <div class="sec-head"><span class="sec-num">17</span><h2>Decisions I need from you</h2></div>
+      <div class="voices"><span class="v v-pm">Product</span></div>
+      <div class="wrap"><p style="margin-top:22px">These change the work. Everything else is decided and documented above.</p></div>
+
+      <div class="dec wide">
+        <article><span class="d">D1</span><div><b>AWS region</b><span><strong>ap-south-1 (Mumbai)</strong> — lowest latency to Bangalore, and data stays in India for DPDP</span></div></article>
+        <article><span class="d">D2</span><div><b>SMS provider</b><span><strong>MSG91</strong> — India-native, DLT-ready, cheapest. Start DLT registration this week regardless</span></div></article>
+        <article><span class="d">D3</span><div><b>Verification depth</b><span><strong>Selfie liveness only</strong> for v1. Document or Aadhaar KYC is more friction than a v1 can absorb</span></div></article>
+        <article><span class="d">D4</span><div><b>Apple Developer account — do you have one?</b><span>Required before M7, and <strong>enrolment can take 1–2 weeks. Start it now</strong></span></div></article>
+        <article><span class="d">D5</span><div><b>Maps provider</b><span><strong>Google for v1</strong> (free tier, plainer); Mapbox as a P1 upgrade if the styling limits the aesthetic</span></div></article>
+        <article><span class="d">D6</span><div><b>Launch scope</b><span><strong>One Bangalore neighbourhood</strong> — Indiranagar or Koramangala. Density beats coverage</span></div></article>
+        <article><span class="d">D7</span><div><b>Infrastructure budget</b><span>Confirm <strong>~$260/mo</strong> at 5k DAU is acceptable, or the ~$95 shape is the fallback</span></div></article>
+        <article><span class="d">D8</span><div><b>Keep the v1 Flutter code past M4?</b><span><strong>Delete it at M4.</strong> Dead code that no longer compiles is a liability</span></div></article>
+      </div>
+    </section>
+
+    <footer>
+      <span>Fryyday · PRD v2.0</span>
+      <span>Prototype specification</span>
+      <span>2026-09-07</span>
+      <span>Aiverse</span>
+    </footer>
+
+  </main>
+</div>

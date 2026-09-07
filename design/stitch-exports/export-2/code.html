@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Goa Trip | Premium Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            --primary-neon: #EAFF00;
+        }
+        body {
+            background-color: #121317;
+            color: #e3e2e7;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-panel {
+            background: rgba(18, 19, 23, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(234, 255, 0, 0.3);
+        }
+        .neon-border-focus:focus-within {
+            border-bottom-color: var(--primary-neon);
+            box-shadow: 0 4px 12px -4px rgba(234, 255, 0, 0.2);
+        }
+        .vertical-strike {
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, var(--primary-neon), transparent);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-container": "#616a00",
+                      "inverse-on-surface": "#2f3035",
+                      "on-secondary": "#2f3037",
+                      "surface-container-high": "#292a2e",
+                      "surface-dim": "#121317",
+                      "secondary": "#c6c5cf",
+                      "on-error": "#690005",
+                      "error": "#ffb4ab",
+                      "tertiary-container": "#c5e9ef",
+                      "surface": "#121317",
+                      "on-secondary-container": "#b5b4bd",
+                      "primary-fixed-dim": "#c0d100",
+                      "surface-container-highest": "#343439",
+                      "primary-container": "#EAFF00",
+                      "primary": "#ffffff",
+                      "on-tertiary-container": "#486a6f",
+                      "secondary-fixed": "#e3e1eb",
+                      "primary-fixed": "#dbee00",
+                      "on-error-container": "#ffdad6",
+                      "inverse-primary": "#5b6400",
+                      "surface-tint": "#c0d100",
+                      "on-primary-fixed-variant": "#444b00",
+                      "on-secondary-fixed": "#1a1b22",
+                      "tertiary-fixed-dim": "#aacdd2",
+                      "background": "#121317",
+                      "on-tertiary-fixed": "#001f24",
+                      "secondary-fixed-dim": "#c6c5cf",
+                      "on-primary": "#2e3300",
+                      "tertiary": "#ffffff",
+                      "outline": "#919378",
+                      "surface-bright": "#38393d",
+                      "on-primary-fixed": "#1a1e00",
+                      "on-tertiary-fixed-variant": "#2a4c51",
+                      "on-secondary-fixed-variant": "#45464e",
+                      "surface-container-low": "#1a1b20",
+                      "surface-container": "#1e1f24",
+                      "surface-variant": "#343439",
+                      "tertiary-fixed": "#c5e9ef",
+                      "secondary-container": "#45464e",
+                      "error-container": "#93000a",
+                      "outline-variant": "#464832",
+                      "on-surface-variant": "#c7c9ab",
+                      "surface-container-lowest": "#0d0e12",
+                      "on-surface": "#e3e2e7",
+                      "on-tertiary": "#12353a",
+                      "on-background": "#e3e2e7",
+                      "inverse-surface": "#e3e2e7"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "sm": "12px",
+                      "xs": "4px",
+                      "lg": "48px",
+                      "base": "8px",
+                      "xl": "80px",
+                      "gutter": "24px",
+                      "md": "24px",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Hanken Grotesk"],
+                      "title-md": ["Hanken Grotesk"],
+                      "headline-lg-mobile": ["Hanken Grotesk"],
+                      "label-md": ["JetBrains Mono"],
+                      "display-lg": ["Hanken Grotesk"],
+                      "body-sm": ["Hanken Grotesk"],
+                      "body-lg": ["Hanken Grotesk"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "title-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "display-lg": ["56px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background selection:bg-primary-container selection:text-on-primary">
+<!-- Top AppBar (from JSON) -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10 shadow-[0_0_15px_rgba(234,255,0,0.1)] flex items-center justify-between px-md h-16">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-white/20">
+<img alt="Travel group" class="w-full h-full object-cover" data-alt="A diverse group of cheerful young travelers laughing together against a vibrant tropical sunset backdrop in Goa. The lighting is warm and golden, with high-contrast shadows emphasizing a luxury aesthetic. The image features deep blacks and electric yellow highlights, mirroring a premium dark-mode interface with a sense of energy and adventure." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAi_s6RRGTtdQbKHqylUYrmxooRv_mcEHz0cEXe9SlejTjem2qtLnJ-r3kjOKnBZQRM51rnv62YQIVCwvILl7bjMxoPjmEv6tOcqktPBloiIGVFGsOnMy4YtV03hvS_2Q1daTJchID96tJYviuqlpUslE_qL3hSRJ2MqVNF4btrGlCHcvf7Dk-fcmbylTSdbILynJh0WGa3h9KU2bdXoNZYw5ncMsGPCTwvXwIG5s77GluijuuoKAnK9Nh1SEvo4Uvizw38hD63wXU"/>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">Goa Trip</h1>
+</div>
+<div class="flex items-center gap-sm">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-white/5 transition-colors p-sm rounded-full active:scale-95 duration-200" data-icon="more_vert">more_vert</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="pt-16 pb-24 min-h-screen max-w-4xl mx-auto px-gutter flex flex-col">
+<!-- Live Participants / Status -->
+<div class="py-lg flex items-center justify-between border-b border-white/5 mb-lg">
+<div class="flex -space-x-3">
+<div class="w-8 h-8 rounded-full border-2 border-background overflow-hidden">
+<img alt="User 1" data-alt="Close-up portrait of a stylish man with a modern haircut in a neon-lit urban environment. The aesthetic is ultra-modern and tech-focused, utilizing a color palette of deep blacks and electric yellow accents. Lighting is dramatic and high-contrast, conveying speed and precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLBiwWlRtN3OZDcG-KI-jjmk_SEkZHsnEfzWi0dqK1wYABqY-XxxTnnxrkKUS67wMfwXDkRmrMJmMbukCQIYEgmRyFqw7kKOXndGHnvz_Xc3DxV3E0ltZCaYY88DMxuPIow72MmUykgSorDzDuAiNtOBIeWAEUBNLoR5yUNUfRh7_YMpQH2QDvlFql9lYZ94GAvt3bXeWt6TL39_mF4Q_EXzJdQR2Ns1qOTKoOuJyos_KvhFfymKO4Gkf7QA9nwD79R2td0u7VsPY"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-background overflow-hidden">
+<img alt="User 2" data-alt="A portrait of a tech-savvy woman with sleek hair, illuminated by the cool glow of digital screens in a dark setting. The style is minimalist and high-contrast, with neon yellow highlights providing a cyberpunk feel. The mood is focused and energetic, fitting a professional developer-centric aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAL4Uh7eP173FoAYbcWxWpe4OME9x0RrQfIkc372WcmD8S-GLm_T5YhqoBd32vRk2qCOYCF9GlCNeL6evj1A4mptmqO5UwCfA2TKAi1eYvmguuiE4V1Az58VZylemm93dkNeuk4tMGw-SoZYis9bz-EsWLzfHF0SloIwTYnm859KkiKA91L2sZUQrRr2lU4L9pay4T2UoGxiSF8cUtA_vrqjW1GMDmNzpEy9e5_iutsWasdS9zy5G4VIdFoqtq9BgIMxyVJY3t4u18"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-background bg-surface-container-highest flex items-center justify-center text-[10px] font-label-md text-primary">+8</div>
+</div>
+<div class="flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-primary-container neon-glow animate-pulse"></span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Live: Flight tracking</span>
+</div>
+</div>
+<!-- Chat Feed -->
+<div class="flex-grow flex flex-col gap-xl custom-scrollbar overflow-y-auto">
+<!-- Message 1 -->
+<div class="flex items-start gap-md group">
+<div class="vertical-strike h-12 self-stretch"></div>
+<div class="flex flex-col">
+<span class="font-bold text-[#EAFF00] font-headline-lg-mobile text-sm tracking-wider mb-xs">ADITYA_V</span>
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed max-w-2xl">Just landed in Dabolim. The humidity is real, but the vibe is already 10/10. Where are we meeting for the first sunset session?</p>
+<span class="font-label-md text-[10px] text-on-surface-variant/40 mt-sm opacity-0 group-hover:opacity-100 transition-opacity">14:22 PM</span>
+</div>
+</div>
+<!-- Message 2 -->
+<div class="flex items-start gap-md group">
+<div class="vertical-strike h-12 self-stretch opacity-20"></div>
+<div class="flex flex-col">
+<span class="font-bold text-[#EAFF00] font-headline-lg-mobile text-sm tracking-wider mb-xs">SARAH_K</span>
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed max-w-2xl">Heading to Vagator now. I booked the beach club spot for 6 PM. Bringing the drone for some high-res shots of the coastline.</p>
+<span class="font-label-md text-[10px] text-on-surface-variant/40 mt-sm opacity-0 group-hover:opacity-100 transition-opacity">14:25 PM</span>
+</div>
+</div>
+<!-- System Message / Divider -->
+<div class="flex items-center gap-md my-base">
+<div class="h-[1px] flex-grow bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+<span class="font-label-md text-[10px] text-on-surface-variant/30 uppercase tracking-[0.2em]">Map Shared</span>
+<div class="h-[1px] flex-grow bg-gradient-to-r from-white/10 via-white/10 to-transparent"></div>
+</div>
+<!-- Message with Image -->
+<div class="flex items-start gap-md group">
+<div class="vertical-strike h-24 self-stretch"></div>
+<div class="flex flex-col gap-sm">
+<span class="font-bold text-[#EAFF00] font-headline-lg-mobile text-sm tracking-wider">MARCUS_X</span>
+<div class="w-full aspect-video rounded-lg overflow-hidden border border-white/10 glass-panel">
+<img alt="Goa Beach" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" data-alt="A breathtaking view of a secluded Goa beach at dusk, with dramatic rock formations and crashing waves. The scene is shot in a cinematic, high-contrast style with deep blacks and neon yellow reflections on the water's surface. The lighting is moody and electric, emphasizing a premium and fast-feeling travel aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7IxaBcbZyqbtQX8JCewCwABdBQCDpegdSCZ4cQyhH7Y4kZf4JfCT64PsXys4dGk5SezOfPXPIqi7boCAsKiIw0GfAE7c6OYkY_YNm9-axbPPbVWlVzRtfaFomj8kLb2s1yAl82zseX8eRNEeFDSgzSDbTtuavjipL5wYlkLm0JVlgV-luBe_yE9XSctk9Vx0dnOQelrs9yLEN2zClqqgB0coFaKeV_l0vb_ZplUN_8HjxxyWxICHnOKV2Szq5gDspAEobTRnfFKE"/>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface">Found this spot. Totally empty. Sending the pin now.</p>
+<span class="font-label-md text-[10px] text-on-surface-variant/40 mt-sm opacity-0 group-hover:opacity-100 transition-opacity">14:31 PM</span>
+</div>
+</div>
+<!-- Message 3 -->
+<div class="flex items-start gap-md group">
+<div class="vertical-strike h-12 self-stretch opacity-20"></div>
+<div class="flex flex-col">
+<span class="font-bold text-[#EAFF00] font-headline-lg-mobile text-sm tracking-wider mb-xs">ADITYA_V</span>
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed max-w-2xl">Sick. On my way. ⚡️</p>
+<span class="font-label-md text-[10px] text-on-surface-variant/40 mt-sm opacity-0 group-hover:opacity-100 transition-opacity">14:33 PM</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Input Area (Task-focused) -->
+<div class="fixed bottom-20 w-full px-gutter z-40 md:bottom-24">
+<div class="max-w-4xl mx-auto glass-panel rounded-xl p-xs flex items-center gap-sm neon-border-focus transition-all duration-300">
+<button class="material-symbols-outlined text-on-surface-variant p-sm hover:text-primary transition-colors" data-icon="add">add</button>
+<input class="flex-grow bg-transparent border-none focus:ring-0 text-on-surface font-body-lg py-sm px-xs placeholder:text-on-surface-variant/30" placeholder="Type your message..." type="text"/>
+<button class="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center text-on-primary neon-glow hover:scale-105 active:scale-90 transition-all duration-300 group">
+<span class="material-symbols-outlined font-bold transition-transform group-hover:translate-x-1" data-icon="send">send</span>
+</button>
+</div>
+</div>
+<!-- Bottom Navigation Bar (from JSON) -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-full bg-surface/90 backdrop-blur-2xl border-t border-white/10 shadow-[0_-5px_20px_rgba(0,0,0,0.5)] flex justify-around items-center px-gutter py-sm">
+<a class="flex items-center justify-center text-on-primary bg-primary rounded-full w-12 h-12 shadow-[0_0_15px_rgba(234,255,0,0.4)] active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+</a>
+<a class="flex items-center justify-center text-on-surface-variant/60 w-12 h-12 hover:text-primary transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+</a>
+<a class="flex items-center justify-center text-on-surface-variant/60 w-12 h-12 hover:text-primary transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+</a>
+<a class="flex items-center justify-center text-on-surface-variant/60 w-12 h-12 hover:text-primary transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for the send button
+        const sendBtn = document.querySelector('button .material-symbols-outlined[data-icon="send"]').parentElement;
+        const inputField = document.querySelector('input');
+
+        sendBtn.addEventListener('click', () => {
+            if (inputField.value.trim() !== "") {
+                // Simulate send flash
+                sendBtn.classList.add('brightness-150', 'scale-110');
+                setTimeout(() => {
+                    sendBtn.classList.remove('brightness-150', 'scale-110');
+                    inputField.value = "";
+                }, 200);
+            }
+        });
+
+        inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendBtn.click();
+            }
+        });
+
+        // Horizontal atmospheric glow following mouse on desktop
+        if (window.innerWidth > 768) {
+            document.addEventListener('mousemove', (e) => {
+                const x = (e.clientX / window.innerWidth) * 100;
+                const y = (e.clientY / window.innerHeight) * 100;
+                document.body.style.backgroundImage = `radial-gradient(circle at ${x}% ${y}%, rgba(234, 255, 0, 0.03) 0%, transparent 50%)`;
+            });
+        }
+    </script>
+</body></html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FRYYDAY - Premium Experience</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "primary": "#eaff00",
+              "surface": "#0a0a0b",
+              "surface-bright": "#121214",
+              "on-surface": "#e3e2e7",
+              "on-surface-variant": "#c7c9ab",
+              "outline": "#919378",
+              "background": "#000000"
+            },
+            "borderRadius": {
+              "DEFAULT": "0.125rem",
+              "lg": "0.25rem",
+              "xl": "0.75rem",
+              "2xl": "1.25rem",
+              "full": "9999px"
+            },
+            "spacing": {
+              "gutter": "24px",
+              "xs": "4px",
+              "sm": "12px",
+              "md": "24px",
+              "lg": "48px",
+              "xl": "80px",
+              "container-max": "1280px"
+            },
+            "fontFamily": {
+              "body": ["Hanken Grotesk", "sans-serif"],
+              "mono": ["JetBrains Mono", "monospace"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #eaff00; border-radius: 10px; }
+        
+        body { 
+            background-color: #000000;
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(234, 255, 0, 0.15);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(234, 255, 0, 0.6);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+            box-shadow: 0 0 30px rgba(234, 255, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .premium-input {
+            background: linear-gradient(180deg, rgba(18, 18, 20, 0.8) 0%, rgba(10, 10, 11, 0.9) 100%);
+            box-shadow: inset 0 1px 1px rgba(234, 255, 0, 0.1), 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .label-glow {
+            text-shadow: 0 0 10px rgba(234, 255, 0, 0.3);
+        }
+
+        .shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 45%, rgba(234, 255, 0, 0.1) 50%, transparent 55%);
+            animation: shimmer-effect 6s infinite;
+        }
+
+        @keyframes shimmer-effect {
+            0% { transform: translate(-30%, -30%); }
+            100% { transform: translate(30%, 30%); }
+        }
+    </style>
+</head>
+<body class="text-on-surface min-h-screen flex flex-col antialiased selection:bg-primary selection:text-black">
+<!-- Top Navigation -->
+<header class="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-2xl border-b border-white/5">
+<div class="flex justify-between items-center px-gutter py-5 max-w-container-max mx-auto">
+<div class="flex items-center gap-6 group cursor-pointer">
+<span class="material-symbols-outlined text-primary text-2xl">menu</span>
+<h1 class="text-2xl font-extrabold tracking-[-0.05em] text-primary italic">FRYYDAY</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative p-[1px] rounded-full bg-gradient-to-tr from-primary/40 to-transparent">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-bright border border-black">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8mrox-8aSDCGrfYJih_8WDWY8Wrfja-4FwuxxiOw0mM0CYK8LLAGrtSVGg9tuWnf6fgA_vTrWfR3uT7KhVHBmSiaiWqzUCMiaZQkLrqhWNNxqmmgvZynGuYP0i9Cd2s4JkEqmypP65h6wA56hO9fC2ylTgFp1HehLi7N8OjkUavVirHW2uuMLVxQuyQftBE5KIKqQj-5vwl-lzFfjVwBv2-mYBr0I--piY7B35Qcho60EeyTFtPRFbrGkky5WE3I7cFhdjdQlVAE"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col items-center justify-center px-4 md:px-lg pt-24 pb-12 w-full max-w-container-max mx-auto relative overflow-hidden">
+<!-- Atmospheric Background -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none -z-10">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] bg-primary/5 rounded-full blur-[120px]"></div>
+<div class="absolute top-1/4 right-0 w-[40vw] h-[40vw] bg-primary/5 rounded-full blur-[100px]"></div>
+</div>
+<!-- Elevated Masonry Grid -->
+<div class="w-full max-w-2xl flex flex-col gap-8 items-center mt-auto mb-auto">
+<div class="grid grid-cols-6 grid-rows-6 gap-3 md:gap-4 w-full aspect-[4/5] md:aspect-square max-h-[60vh]">
+<!-- WALK: Large Vertical -->
+<button class="col-span-3 row-span-4 glass-card rounded-2xl group relative overflow-hidden flex items-end p-4">
+<img alt="Walk" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLv66cQS3UK3Vq_0--s7cJjLuNgpn0BDc4LOpGlev82H676WMU2M1gXh9eEkefhN_eJClELlxikNbY_59B8C7A-jjfuV1YQEnnTbMVtwpNRz6fTDh7VGddHvS0TecJlK9qdKp8HZKkeq_bs09QZqoYoz4qTTrh11iqToNYnseGngJM2BeLxTwtVY4N539kreKqSWxhS6fjR-RkfIhoUhSAqe2sdTv0Gu8WgazOauaGwnmPs4gWSEYe5Oaw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+<div class="relative z-20 flex flex-col items-start gap-1">
+<span class="material-symbols-outlined text-primary text-2xl label-glow">directions_walk</span>
+<span class="font-mono text-[10px] tracking-[0.2em] text-primary font-bold uppercase">WALK</span>
+</div>
+</button>
+<!-- COFFEE: Top Right Square -->
+<button class="col-span-3 row-span-2 glass-card rounded-2xl group relative overflow-hidden flex items-center justify-center p-4">
+<img alt="Coffee" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-all duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLt9RfbJzx719mEL1a_ro10Q8cQqAqxAtA7AUz0kWZ_cwxCHeiPJdjnFpPCCt68Hh-ZdzL0oBTCphMgafFwL8-kDC8Smn2OrWNTfs3KK4EMxiciT2tPLAoWkVbict5Zqwglr5GUB9SstBKBbMw0mJMcB-OH7nnZ4xoWd36-k6GkZUobGSBdoglcJkCKy80ZvT1OfUwSAVB3RTsEilBUNbI0fEX7oqEcPwdOKCVPRpnck1-irxvocZl2F-_s"/>
+<div class="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/20 transition-colors"></div>
+<div class="relative z-20 flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary text-3xl label-glow">local_cafe</span>
+<span class="font-mono text-[10px] tracking-[0.2em] text-primary font-bold uppercase">COFFEE</span>
+</div>
+</button>
+<!-- PICKLEBALL: Middle Right Wide -->
+<button class="col-span-3 row-span-2 glass-card rounded-2xl group relative overflow-hidden flex items-center justify-center p-4">
+<img alt="Pickleball" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-all duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLse35ADscenj8xp2lZwm4YEFAKVxDo0-unzYSxZ1lJXSpiWDUIUbQ9IeGClUzrgxlZRALvGsMyljft0R3NXPjq28tF2TonaEX3Cdn6t7sGhp_woyUj3WG7p_czG43XdcdGLZqL0BVnJHoz-pAJVBgXWBXu2VMNMPc1v1N7XWDC45-mm_GyUScwJ0WiZgownfjk_2C3ZV36LvlEjvoYtPmpVjGJmbSyeI0YJf2awFnuxNJEDttHvJ9U-kMg"/>
+<div class="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/20 transition-colors"></div>
+<div class="relative z-20 flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary text-3xl label-glow">sports_tennis</span>
+<span class="font-mono text-[10px] tracking-[0.2em] text-primary font-bold uppercase">PICKLEBALL</span>
+</div>
+</button>
+<!-- MOVIE: Bottom Left Small -->
+<button class="col-span-2 row-span-2 glass-card rounded-2xl group relative overflow-hidden flex items-center justify-center p-4">
+<img alt="Movie" class="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-all duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLsqxNL1c23yyETaqDeWWiVD089-l_xEBQP1VQU6g3534zTtcEtuc-q6QBD5GfU4DRoFywaXgS-NNTDT9dhhcezxZHuXl4VR_72GeJQAqeotSOxHCgSeDIr0OmNOO49_Zj7Qhf-nNMmQ1A5_bQ6KaP3NcXZDq2JaHg_1_FjeyHdtxkJcXjmlprj8QQYAKnz0EDJaps2sweJtQv-hQr2d8Eq_0Aqi1jKT6MRdqeKT1wMaZ5dznZTjVFxDe48"/>
+<div class="absolute inset-0 bg-black/50 z-10 group-hover:bg-black/30 transition-colors"></div>
+<div class="relative z-20 flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary text-2xl label-glow">movie</span>
+<span class="font-mono text-[10px] tracking-[0.2em] text-primary font-bold uppercase">MOVIE</span>
+</div>
+</button>
+<!-- TRAVEL: Bottom Right Wide -->
+<button class="col-span-4 row-span-2 glass-card rounded-2xl group relative overflow-hidden flex items-center justify-center p-4">
+<img alt="Travel" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-all duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLtyXIIqsvoHMYVWOX8vsb-PMqNNaAU7wczBqRjKUzeGJ4gLAlXBGrDhlfpzuW6B7eDhmyF9CyxibyF1R6u_OTW1mJO-SxOLpe1-bX79qE6M6spZvzFMahltjoeLufvSh_8fV_To6bJ4eu1AK8kgjHTiCdzzzMwjQVkoeHxTUkou5Ykg14MtB2Z6w5w_kyihT2bShC3Swsi8_Vdg_2ttmcoWyMv3e3yBFN3VnEkc_YFFYA_HRX2wgvWI610"/>
+<div class="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/20 transition-colors"></div>
+<div class="relative z-20 flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary text-3xl label-glow">flight</span>
+<span class="font-mono text-[10px] tracking-[0.2em] text-primary font-bold uppercase">TRAVEL</span>
+</div>
+</button>
+</div>
+<!-- Central Elevated Input Bar -->
+<div class="w-full max-w-xl">
+<div class="premium-input p-1.5 rounded-[20px] border border-white/10 flex items-center group focus-within:border-primary/50 transition-all duration-500 relative">
+<!-- Inner Glow Overlay -->
+<div class="absolute inset-0 rounded-[20px] pointer-events-none opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 shadow-[inset_0_0_20px_rgba(234,255,0,0.05)]"></div>
+<div class="relative flex items-center ml-2 mr-1">
+<select class="appearance-none bg-black/40 border border-white/10 text-primary font-mono text-[10px] tracking-wider uppercase rounded-lg px-3 py-2 pr-8 focus:outline-none focus:border-primary/50 cursor-pointer transition-all">
+<option value="friends">Friends</option>
+<option value="group">Group</option>
+<option value="public">Public</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 pointer-events-none text-primary text-sm">expand_more</span>
+</div><button class="w-12 h-12 flex items-center justify-center text-primary/80 hover:text-primary transition-colors ml-0">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+<input class="flex-1 bg-transparent border-none text-white placeholder:text-white/20 focus:ring-0 font-mono text-sm tracking-wider uppercase px-2" placeholder="INVITE NOW / ASK ANYTHING" type="text"/>
+<div class="flex items-center gap-1 pr-1">
+<button class="shimmer w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-black shadow-[0_0_20px_rgba(234,255,0,0.3)] hover:shadow-[0_0_30px_rgba(234,255,0,0.5)] hover:scale-[1.02] active:scale-95 transition-all duration-300">
+<span class="material-symbols-outlined font-bold text-xl" style="font-variation-settings: 'FILL' 1, 'wght' 700;">arrow_upward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer info subtle -->
+<footer class="w-full py-6 px-gutter text-center border-t border-white/5">
+<p class="font-mono text-[9px] tracking-[0.3em] text-white/20 uppercase">Obsidian Core v2.0 • Fryyday Lab</p>
+</footer>
+</body></html>

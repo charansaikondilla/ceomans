@@ -1,0 +1,19 @@
+# Superseded v1 Flutter implementation — kept locally as a port reference
+legacy-flutter/
+
+# Archived, superseded documents
+_archive/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# Tooling
+.agents/
+node_modules/
+.turbo/
+dist/
+build/

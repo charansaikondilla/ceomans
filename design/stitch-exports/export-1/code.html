@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-container": "#616a00",
+                    "inverse-on-surface": "#2f3035",
+                    "on-secondary": "#2f3037",
+                    "surface-container-high": "#292a2e",
+                    "surface-dim": "#121317",
+                    "secondary": "#c6c5cf",
+                    "on-error": "#690005",
+                    "error": "#ffb4ab",
+                    "tertiary-container": "#c5e9ef",
+                    "surface": "#121317",
+                    "on-secondary-container": "#b5b4bd",
+                    "primary-fixed-dim": "#c0d100",
+                    "surface-container-highest": "#343439",
+                    "primary-container": "#dbee00",
+                    "primary": "#ffffff",
+                    "on-tertiary-container": "#486a6f",
+                    "secondary-fixed": "#e3e1eb",
+                    "primary-fixed": "#dbee00",
+                    "on-error-container": "#ffdad6",
+                    "inverse-primary": "#5b6400",
+                    "surface-tint": "#c0d100",
+                    "on-primary-fixed-variant": "#444b00",
+                    "on-secondary-fixed": "#1a1b22",
+                    "tertiary-fixed-dim": "#aacdd2",
+                    "background": "#121317",
+                    "on-tertiary-fixed": "#001f24",
+                    "secondary-fixed-dim": "#c6c5cf",
+                    "on-primary": "#2e3300",
+                    "tertiary": "#ffffff",
+                    "outline": "#919378",
+                    "surface-bright": "#38393d",
+                    "on-primary-fixed": "#1a1e00",
+                    "on-tertiary-fixed-variant": "#2a4c51",
+                    "on-secondary-fixed-variant": "#45464e",
+                    "surface-container-low": "#1a1b20",
+                    "surface-container": "#1e1f24",
+                    "surface-variant": "#343439",
+                    "tertiary-fixed": "#c5e9ef",
+                    "secondary-container": "#45464e",
+                    "error-container": "#93000a",
+                    "outline-variant": "#464832",
+                    "on-surface-variant": "#c7c9ab",
+                    "surface-container-lowest": "#0d0e12",
+                    "on-surface": "#e3e2e7",
+                    "on-tertiary": "#12353a",
+                    "on-background": "#e3e2e7",
+                    "inverse-surface": "#e3e2e7",
+                    "accent-neon": "#EAFF00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "sm": "12px",
+                    "xs": "4px",
+                    "lg": "48px",
+                    "base": "8px",
+                    "xl": "80px",
+                    "gutter": "24px",
+                    "md": "24px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Hanken Grotesk"],
+                    "title-md": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "label-md": ["JetBrains Mono"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-sm": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "title-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "display-lg": ["56px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #121317; scrollbar-width: none; -ms-overflow-style: none; }
+        body::-webkit-scrollbar { display: none; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .active-glass {
+            border: 1px solid rgba(234, 255, 0, 0.4);
+            box-shadow: 0 0 15px rgba(234, 255, 0, 0.1);
+        }
+        .neon-glow {
+            text-shadow: 0 0 10px rgba(234, 255, 0, 0.8), 0 0 20px rgba(234, 255, 0, 0.4);
+        }
+        .flicker-on-load {
+            animation: flicker 0.5s ease-out;
+        }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+            70% { opacity: 1; }
+            80% { opacity: 0.8; }
+        }
+        .message-card {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .message-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(234, 255, 0, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col h-screen text-on-surface overflow-hidden">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10 shadow-[0_0_15px_rgba(234,255,0,0.1)] flex items-center justify-between px-md h-16">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border border-white/20 flex items-center justify-center overflow-hidden">
+<img alt="Group" class="w-full h-full object-cover" data-alt="A high-resolution profile avatar of a diverse group of young energetic travelers smiling against a bright tropical background. The lighting is sunny and warm, reflecting a vacation vibe, while the overall aesthetic is clean and modern, fitting a premium digital interface for a luxury travel app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJRcFZ7ad5w7cQJnUCeE4Vv51-YjHkh99YSU3waHUwS39GFoT8UJdveb7gbRdyLJhIJo5m0cI9jX8kHzSdauqcB3Ir3DKw2khuXGRLxw2OhQBqHvwou2b3GYys3mQBgITRQw60DcwnXL4_B0_R6wrJ-DUtWYc1RnYAxNlSBjUgycCWRzjszXi3fzBEilsjVsrdIBw9seXwYJNt-BzYa7QvFq47O_bDDPWpbe17IsSUsrk4AOFtM6FrhHGOpfRfTVbh0rohPz5Y5M8"/>
+</div>
+<div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">Goa Trip</h1>
+<p class="font-label-md text-label-md text-accent-neon neon-glow uppercase tracking-widest" id="countdown">04D : 12H : 44M</p>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 mt-16 mb-20 overflow-y-auto px-gutter py-md space-y-gutter scroll-smooth" id="chat-container">
+<!-- Date Header -->
+<div class="flex justify-center">
+<span class="bg-surface-container-high px-md py-xs rounded-full font-label-md text-label-md text-on-surface-variant border border-white/5">TODAY</span>
+</div>
+<!-- Dynamic Message Card (Other) -->
+<div class="flex gap-sm max-w-[85%]">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex-shrink-0">
+<img alt="Rohan" class="w-full h-full object-cover rounded-full" data-alt="Close up portrait of a young man with a stylish haircut and tech-enthusiast expression. Background is a soft-focus interior with cool neon blue and deep violet ambient lighting. Professional photography style, high contrast, cinematic atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzaLnR3-N9SAMH-ho_hsiJjrWzVqHHAIuOWfs_dk02HsfQg4aBARASXz_ukJ9Xt4VbfF49TMgFPcFZa-H-X2RL0O7l0Wk0Cki1oci6o6BGrFuM13897yqdwSikB_FFc4IibkJPrufDn2lLGxI_cu49GnkF_gNqCFknfXvgOPCZePhNC2fXC336xzpzFq7n8vJg5TSRomwf1veJF4oAIcazFE1AnlGrUvYoMzVSyQUh7H_zWx0rp0KisvQuuYFcdiT38q83ocsZ0Jk"/>
+</div>
+<div class="glass-panel p-sm rounded-xl rounded-tl-none space-y-xs message-card">
+<div class="flex justify-between items-center gap-xl">
+<span class="font-label-md text-label-md text-accent-neon">Rohan</span>
+<span class="font-label-md text-label-md text-on-surface-variant/50">14:20</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface">Just booked the beach house at Vagator. The pool area is insane! 🌊</p>
+<div class="pt-xs flex justify-end">
+<span class="material-symbols-outlined text-[14px] text-accent-neon" style="font-variation-settings: 'FILL' 1;">done_all</span>
+</div>
+</div>
+</div>
+<!-- Dynamic Message Card (Self) -->
+<div class="flex gap-sm max-w-[85%] ml-auto flex-row-reverse">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex-shrink-0">
+<img alt="Me" class="w-full h-full object-cover rounded-full" data-alt="A portrait of a confident young professional looking into the camera with a slight smile. The background consists of modern architectural lines with dramatic shadows and sharp highlights. The color palette is dominated by deep charcoal and electric yellow accents, consistent with a high-end tech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5kg8c5xNO1zIwL_cnK-hatGX27sjS_rGJ8IFJtZNn8bJPP6jLMg6kYaS5ctyB9Ep4Z7CTj4A_Ee14qaJ5l3JGR7tSPsJmsrjUyui6iGgBeeaOtG4mnlHzkN9QFvpI6hOSBWxJWLBfa7DixYqowwxTqgcpA9_69s3KFyvNAajkbgqNMGI88GBIHWv4-_My_u7u57zGDsicyleVWQrNDrwNuY1jVQ525TxLeNtl7km-CwK-oi7doTDksV3AKywoA5Zubu9V0uPKEh0"/>
+</div>
+<div class="active-glass bg-accent-neon/5 p-sm rounded-xl rounded-tr-none space-y-xs message-card">
+<div class="flex justify-between items-center gap-xl">
+<span class="font-label-md text-label-md text-primary">Me</span>
+<span class="font-label-md text-label-md text-on-surface-variant/50">14:22</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface">Legendary. Did they confirm the late checkout for Monday?</p>
+<div class="pt-xs flex justify-end">
+<span class="material-symbols-outlined text-[14px] text-accent-neon" style="font-variation-settings: 'FILL' 1;">done_all</span>
+</div>
+</div>
+</div>
+<!-- Bento Grid Card for Shared Media -->
+<div class="grid grid-cols-2 gap-xs glass-panel p-xs rounded-xl max-w-[85%]">
+<div class="col-span-2 relative h-40 overflow-hidden rounded-lg">
+<img class="w-full h-full object-cover" data-alt="An ultra-modern, luxury villa exterior in Goa at twilight. The architecture features clean lines and large glass panels, reflecting a glowing infinity pool illuminated with internal yellow lights. The surrounding lush tropical palm trees are silhouetted against a deep indigo sky, creating an atmosphere of exclusive high-energy nightlife." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWC56CTzLcGh2PU-Yg-WtG2J5GjM5FIsfqhuORDEVZfSi_GLb1kvH13KwywMMzYCq3o6nun7YeuHfz5YK10ruYbWy50bPde7SNt9OhUomfNhb5EV3OfarKJBC-fXcmIP11Bq4L8xlIBsxKDtAHoymXDjurmhbUYc2mY4ycrulrcv4TFHKllKGiFdUH5nQ28koS-AcsQANLi8IINI2wHjIjgl8WypcyaWJQAKpDij0mj4vMFJyAI2Bd7UTqU1MXjRm5WD1R5D5Ooxk"/>
+<div class="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[10px] font-label-md text-accent-neon">VILLA PREVIEW</div>
+</div>
+<div class="h-24 overflow-hidden rounded-lg">
+<img class="w-full h-full object-cover" data-alt="A sun-drenched beach scene with golden sand and turquoise waves crashing gently. The lighting is high-contrast afternoon sun, casting long shadows. The style is professional travel photography with vibrant color saturation and a clean, high-end feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhFmPlBK8S4HwwWZ-_0V-f1TaUJIY7plX4RQGsGdiT4NolB0mNUMe5ouuV93pSzrn2TRidZhvRs_7Rjdv2UagDZDivhhi7le3quNMH-UFZDC2SflCj0OmWHogiMSSSjyn4M-xjb79uVm8-xroTKaMBU-xZ1o1N6J-UThjjxgfedr8nUCkp5Vh1UGDMiSeUmQUkXmaXdu0HhyxAE0fpTm4qrCSLV0hD3bnfodvcuFEw75bLVLLL_3_mNAEe4q_oKMjyKejjRk8FSV0"/>
+</div>
+<div class="h-24 bg-surface-container-highest rounded-lg flex items-center justify-center border border-white/10 group cursor-pointer hover:bg-white/5 transition-colors">
+<span class="font-title-md text-title-md text-primary">+12</span>
+</div>
+</div>
+<!-- Notification Message -->
+<div class="flex justify-center">
+<div class="flex items-center gap-xs text-on-surface-variant/60 font-label-md text-label-md">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span>Priya joined the power-group</span>
+</div>
+</div>
+<!-- Priya's Message -->
+<div class="flex gap-sm max-w-[85%]">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex-shrink-0">
+<img alt="Priya" class="w-full h-full object-cover rounded-full" data-alt="Portrait of a young woman with a vibrant, energetic expression, wearing modern streetwear. Her face is lit by sharp, directional studio lights that create a dramatic, tech-forward look. Background is a dark metallic texture with subtle yellow light leaks, maintaining the brand's premium dark glassmorphism aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbWbthn0mrQsiMqL1qXcqLodh5hOfmVtfqa6yeqd2zItIfgvQORkO2djrsftuberutldOBwzYM5uguBjpXv4oIOuxkL7EooLLalFz2tLPNW7VxFIpHRxUZwIxtxbacfqb8_ieRhEsFsCny6koMjn4pfoL34aVFaeaz2jYkMyD_ROl7O1_BfajYTji4hAS3gzZZN3zGklGYzuS2-nn9WMIgNBabrgHPkV_r1FNkU5D6qPfMvnTqtiJ18wZ0KtjwTdnH-5JT8HO0iXg"/>
+</div>
+<div class="glass-panel p-sm rounded-xl rounded-tl-none space-y-xs message-card">
+<div class="flex justify-between items-center gap-xl">
+<span class="font-label-md text-label-md text-accent-neon">Priya</span>
+<span class="font-label-md text-label-md text-on-surface-variant/50">14:45</span>
+</div>
+<div class="p-sm bg-white/5 rounded-lg border-l-2 border-accent-neon">
+<p class="font-label-md text-label-md text-on-surface-variant">Replying to "Just booked the beach house..."</p>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface">LETS GOOOO! Ready to pack already ⚡️🌴</p>
+<div class="pt-xs flex justify-end">
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant/30">done</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Input Area -->
+<div class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-2xl border-t border-white/10 shadow-[0_-5px_20px_rgba(0,0,0,0.5)] flex flex-col items-center">
+<!-- Quick React Bar -->
+<div class="flex justify-around items-center w-full px-gutter py-xs border-b border-white/5 overflow-x-auto whitespace-nowrap scrollbar-hide">
+<button class="flex items-center justify-center p-2 rounded-lg hover:bg-accent-neon/10 transition-colors active:scale-90 group">
+<span class="text-xl group-hover:drop-shadow-[0_0_8px_rgba(234,255,0,0.8)]">⚡️</span>
+</button>
+<button class="flex items-center justify-center p-2 rounded-lg hover:bg-accent-neon/10 transition-colors active:scale-90 group">
+<span class="text-xl group-hover:drop-shadow-[0_0_8px_rgba(234,255,0,0.8)]">🔥</span>
+</button>
+<button class="flex items-center justify-center p-2 rounded-lg hover:bg-accent-neon/10 transition-colors active:scale-90 group">
+<span class="text-xl group-hover:drop-shadow-[0_0_8px_rgba(234,255,0,0.8)]">🏝️</span>
+</button>
+<button class="flex items-center justify-center p-2 rounded-lg hover:bg-accent-neon/10 transition-colors active:scale-90 group">
+<span class="text-xl group-hover:drop-shadow-[0_0_8_rgba(234,255,0,0.8)]">🍹</span>
+</button>
+<button class="flex items-center justify-center p-2 rounded-lg hover:bg-accent-neon/10 transition-colors active:scale-90 group">
+<span class="text-xl group-hover:drop-shadow-[0_0_8_rgba(234,255,0,0.8)]">🕺</span>
+</button>
+<button class="flex items-center justify-center p-2 rounded-lg hover:bg-accent-neon/10 transition-colors active:scale-90 group">
+<span class="text-xl group-hover:drop-shadow-[0_0_8_rgba(234,255,0,0.8)]">🎸</span>
+</button>
+</div>
+<!-- Chat Input -->
+<div class="flex items-center gap-sm px-gutter py-sm w-full">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<div class="flex-1 relative">
+<input class="w-full bg-[#1C1D22] border-0 border-b-2 border-transparent focus:border-accent-neon focus:ring-0 text-body-lg text-on-surface placeholder:text-on-surface-variant/40 rounded-t-lg px-md py-sm transition-all" placeholder="Type a message..." type="text"/>
+<!-- Focus Glow Indicator -->
+<div class="absolute bottom-0 left-0 h-[2px] bg-accent-neon w-0 transition-all duration-300 input-indicator"></div>
+</div>
+<button class="flex items-center justify-center bg-accent-neon text-on-primary rounded-full w-12 h-12 shadow-[0_0_15px_rgba(234,255,0,0.4)] active:scale-90 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</div>
+<!-- Navigation Overlay / FAB (Suppressed as per rules for task-focused chat) -->
+<script>
+        // Smooth scroll to bottom on load
+        window.onload = () => {
+            const container = document.getElementById('chat-container');
+            container.scrollTop = container.scrollHeight;
+        };
+
+        // Input Focus Effect
+        const input = document.querySelector('input');
+        const indicator = document.querySelector('.input-indicator');
+        
+        input.addEventListener('focus', () => {
+            indicator.style.width = '100%';
+        });
+        
+        input.addEventListener('blur', () => {
+            indicator.style.width = '0%';
+        });
+
+        // Simple Countdown Logic
+        let minutes = 44;
+        let hours = 12;
+        let days = 4;
+
+        setInterval(() => {
+            minutes--;
+            if (minutes < 0) {
+                minutes = 59;
+                hours--;
+                if (hours < 0) {
+                    hours = 23;
+                    days--;
+                }
+            }
+            const d = days.toString().padStart(2, '0');
+            const h = hours.toString().padStart(2, '0');
+            const m = minutes.toString().padStart(2, '0');
+            document.getElementById('countdown').textContent = `${d}D : ${h}H : ${m}M`;
+        }, 60000);
+
+        // Click interaction for message cards
+        document.querySelectorAll('.message-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('active-glass');
+            });
+        });
+    </script>
+</body></html>
